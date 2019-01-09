@@ -1,0 +1,86 @@
+.page {
+    display: flex;
+    align-items: center;
+    flex-direction: column;    
+}
+
+.container {
+    margin-top: 450px;
+    width: 33%;
+}
+
+.today-summary {
+    display: flex;
+    justify-content: space-around;
+    padding-bottom: 30px;
+}
+
+.today-earned {
+    background: green;
+    padding: 60px;
+}
+.today-earned-amount {
+    text-align: center;
+}
+
+.today-spent {
+    background: red;
+    padding: 60px;
+}
+.today-spent-amount {
+    text-align: center;
+}
+
+.row {
+    padding-bottom: 10px;
+}
+
+label {
+    padding-top: 15px;
+    margin-right: 25px;
+}
+
+input {
+    width: 150px;
+}
+
+.input-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+label {
+    display: block;
+}
+
+.helper-text {
+    color: #888;
+    font-size: 14px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.summary-today {
+    position: absolute;
+    left: 50px;
+    top: 50px;
+}
+
+.logged-days {
+    font-size: 24px;
+}
+
+.summary-date {    
+    font-size: 42px;
+    font-weight: bold;
+    padding-bottom: 5px;
+}
+
+.budget-summary {
+    padding: 15px 0;
+
+    .small-text {
+        padding-bottom: 5px;
+    }
+}

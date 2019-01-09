@@ -1,1 +1,50 @@
 /* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+html, body {
+    margin: 0;
+    padding: 0;
+    //font-size: 14px;
+    font-family: 'Roboto';
+    color: #444;
+}
+
+input {
+    border: 1px solid #888;
+    border-radius: 3px;
+    padding: 10px 15px;
+    height: 32px;
+    font-size: 24px;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border: 1px solid #007bff;
+}
+
+label {
+    padding-bottom: 20px;
+}
+
+.button {
+    background: #007bff;
+    padding: 10px 20px;
+    color: #fff;
+    display: inline-block;
+    border-radius: 3px;
+    font-size: 20px;
+}
+
+.number-emphasised {
+    color: #333;
+    font-weight: bold;
+}
+
+app-timeline {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: space-evenly;
+}

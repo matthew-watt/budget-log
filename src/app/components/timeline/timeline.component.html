@@ -1,0 +1,5 @@
+<div class="timeline-date"
+      *ngFor="let date of budgetDates"
+      [ngClass]="{ 'date-today': date.isToday() }">
+  {{date.date.format("MMM Do")}}
+</div>

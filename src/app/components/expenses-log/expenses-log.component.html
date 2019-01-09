@@ -1,0 +1,41 @@
+<div class="page">
+  <div class="summary-today">    
+    <div class="summary-date">1st February 2019</div>
+    <div class="logged-days row">You've been budget logging for <span class="number-emphasised">100</span> days</div>
+    <div class="budget-summary">      
+      <div class="total-income row">
+        <div class="small-text">You have earned <span class="number-emphasised">$10.39</span></div>        
+      </div>
+      <div class="total-expenses row">
+          <div class="small-text">You have spent <span class="number-emphasised">$32.50</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+
+    <div class="today-summary" *ngIf="currentDay.spent && currentDay.earned">
+      <div class="today-earned">
+        Earned
+        <div class="today-earned-amount">1.00</div>
+      </div>
+      <div class="today-spent">
+        Spent
+        <div class="today-spent-amount">{{currentDay.spent}}</div>
+      </div>
+    </div>
+
+    <div class="row input-row">
+      <div class="wrap-content">
+        <label>How much did you spend today?</label>
+        <input [(ngModel)]="spentInput" (keyup)="onKey($event)">
+        <div class="helper-text" *ngIf="inputHelperTextVisible">Press enter to continue</div>
+      </div>
+    </div>
+
+    
+
+  </div>
+  
+</div>
+
+<app-timeline class="timeline"></app-timeline>
