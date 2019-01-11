@@ -6,12 +6,13 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ExpensesLogComponent } from './components/expenses-log/expenses-log.component';
 import { TimelineComponent } from './components/timeline/timeline.component';
+import { AchievementsComponent } from './components/achievements/achievements.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ExpensesLogComponent,    
-    TimelineComponent
+    TimelineComponent, AchievementsComponent
   ],
   imports: [
     BrowserModule,

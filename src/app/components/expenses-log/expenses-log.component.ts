@@ -8,12 +8,11 @@ import { CurrentDay } from 'src/app/models/current-day';
 })
 export class ExpensesLogComponent implements OnInit {
   inputHelperTextVisible: boolean = false;
+  currentDay: CurrentDay;
   spentInput: number = null;
   earnedInput: number = null;
-  currentDay: CurrentDay;
-  inputComplete: boolean = false;
-
-  inputLabelText: string;
+  spentInputComplete: boolean = false;
+  earnedInputComplete: boolean = false;
 
   constructor() { }
 
@@ -26,14 +25,29 @@ export class ExpensesLogComponent implements OnInit {
 
   onKey(event: any) {
     if (event.key === 'Enter') {
-      console.log('enter pressed!');
-      this.currentDay.spent = this.spentInput;
-    }
-    
-    if (this.spentInput === null) {
+      // number = 22. 22 3 (include space)
+      // non numeric
+
+      if (this.currentDay.spent) {
+        this.spentInputComplete = true;
+      }
+      if (this.currentDay.earned) {
+        this.earnedInputComplete = true;
+      }
       this.inputHelperTextVisible = false;
-    } else {
-      this.inputHelperTextVisible = true;      
+    }
+
+    console.log(this.spentInputComplete);
+    console.log(this.earnedInputComplete);
+
+    if (this.currentDay.spent && !this.spentInputComplete) {
+      this.inputHelperTextVisible = true;
+    }
+    else if (this.currentDay.earned && this.spentInputComplete && !this.earnedInputComplete) {
+      this.inputHelperTextVisible = true;
+    }
+    else {
+      this.inputHelperTextVisible = false;
     }
   }
 
