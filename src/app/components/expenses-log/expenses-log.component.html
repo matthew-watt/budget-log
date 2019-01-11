@@ -35,11 +35,11 @@
     <div class="row input-row" *ngIf="!spentInputComplete || !earnedInputComplete">
         <div class="spending-input" *ngIf="!spentInputComplete">
           <label>How much did you spend today?</label>
-          <input [(ngModel)]="currentDay.spent" (keyup)="onKey($event)">
+          <input [(ngModel)]="currentDay.spent" (keyup)="onKey($event)" #currentDaySpentInput>
         </div>
         <div class="earnings-input" *ngIf="!earnedInputComplete && spentInputComplete">
           <label>How much did you earn today?</label>
-          <input [(ngModel)]="currentDay.earned" (keyup)="onKey($event)">          
+          <input [(ngModel)]="currentDay.earned" (keyup)="onKey($event)" #currentDayEarnedInput>
         </div>
         <div class="helper-text" *ngIf="inputHelperTextVisible">Press enter to continue</div>
     </div>

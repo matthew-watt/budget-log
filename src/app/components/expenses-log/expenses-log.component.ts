@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CurrentDay } from 'src/app/models/current-day';
 
 @Component({
@@ -14,6 +14,16 @@ export class ExpensesLogComponent implements OnInit {
   spentInputComplete: boolean = false;
   earnedInputComplete: boolean = false;
 
+  @ViewChild("currentDaySpentInput") currentDaySpentInput: ElementRef;
+  @ViewChild("currentDayEarnedInput") currentDayEarnedInput: ElementRef;
+
+  //private currentDayEarnedInput: ElementRef;
+  //@ViewChild('currentDayEarnedInput') set input(input: ElementRef) {
+  //  if (input !== null) {
+  //    this.currentDayEarnedInput = input;
+  //  }
+  //}
+
   constructor() { }
 
   ngOnInit() {
@@ -23,6 +33,16 @@ export class ExpensesLogComponent implements OnInit {
     });
   }
 
+  ngAfterViewInit() {
+    this.currentDaySpentInput.nativeElement.focus();
+  }
+
+  ngAfterViewChecked() {
+    if (typeof this.currentDayEarnedInput !== 'undefined') {
+      this.currentDayEarnedInput.nativeElement.focus();
+    }    
+  }
+
   onKey(event: any) {
     if (event.key === 'Enter') {
       // number = 22. 22 3 (include space)
@@ -30,15 +50,14 @@ export class ExpensesLogComponent implements OnInit {
 
       if (this.currentDay.spent) {
         this.spentInputComplete = true;
+
+        
       }
       if (this.currentDay.earned) {
         this.earnedInputComplete = true;
       }
       this.inputHelperTextVisible = false;
     }
-
-    console.log(this.spentInputComplete);
-    console.log(this.earnedInputComplete);
 
     if (this.currentDay.spent && !this.spentInputComplete) {
       this.inputHelperTextVisible = true;
