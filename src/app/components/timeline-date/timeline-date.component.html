@@ -1,0 +1,12 @@
+<div class="date"
+     (mouseenter)="onMouseEnter()"
+     (mouseleave)="onMouseLeave()">
+  {{budgetDate.date.format("MMM Do")}}
+</div>
+<div class="date-hover"
+     [style.top.px]="offsetTopHover"
+     [style.left.px]="offsetLeftHover"
+     *ngIf="hoverVisible"
+     #hover>
+  spent: $100, earned: $200
+</div>

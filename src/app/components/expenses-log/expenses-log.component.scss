@@ -55,6 +55,7 @@ input {
 
 .input-row {
     height: 125px;
+    margin-bottom: 80px;
 }
 
 .helper-text {
@@ -62,8 +63,9 @@ input {
     //font-size: 14px;
     padding-top: 10px;
     padding-bottom: 10px;
-    width: 70%; // not necessary
-    margin-left: 15%; // remainder of container width 60 - (2 sides = 20% + 20%)
+    //width: 70%; // not necessary
+    //margin-left: 15%; // remainder of container width 60 - (2 sides = 20% + 20%)
+    width: 100%;
 }
 
 .summary-today {
@@ -93,8 +95,10 @@ input {
 .spending-input, .earnings-input {
     display: flex;
     flex-direction: column;
-    width: 70%;
-    margin-left: 15%;
+    width: 100%;
+    font-size: 24px;
+    // margin-left: 15%;
+    // width: 70%;
 }
 
 .summary-note {
@@ -103,4 +107,8 @@ input {
 
 .today-label {
     font-size: 24px;
+}
+
+.completed-input {
+    margin-bottom: 80px;
 }

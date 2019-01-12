@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { BudgetDate } from 'src/app/models/budget-date';
 import * as moment from 'moment';
 import { HostListener } from '@angular/core'
@@ -11,23 +11,25 @@ import { HostListener } from '@angular/core'
 export class TimelineComponent implements OnInit {
   budgetDates: BudgetDate[] = [];
   dateCount: number = 5;
-  screenWidth: number;
+  screenWidth: number = window.innerWidth;
+  @ViewChild('hover') hoverElement: ElementRef;
 
   constructor() { }
 
   ngOnInit() {
     console.log(moment().format("MMM Do"));
+    this.generateDates();
+  }
 
-    // Or
-    // screen width / 10
-    // find remainder space / 2, disperse evenly on left
+  ngAfterViewChecked() {
+    //this.hoverElement.nativeElement.offsetLeft;
+    //console.log(this.hoverElement.nativeElement.offsetLeft);
   }
 
   generateDates() {
     // start with existing budgeted dates, fetch from server
     // append the future dates
-
-    console.log(this.screenWidth);
+    
 
     if (this.screenWidth > 1200) {
       this.dateCount = 4;
@@ -52,6 +54,10 @@ export class TimelineComponent implements OnInit {
 
       this.budgetDates.push(budgetDate);
     }
+  }
+
+  mouseEnter(event) {
+    console.log(event);
   }
 
   @HostListener('window:resize', ['$event'])

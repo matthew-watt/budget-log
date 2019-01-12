@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CurrentDay } from 'src/app/models/current-day';
 
 @Component({
@@ -24,7 +24,7 @@ export class ExpensesLogComponent implements OnInit {
   //  }
   //}
 
-  constructor() { }
+  constructor(private changeDetectorRef: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.currentDay = new CurrentDay({
@@ -37,28 +37,36 @@ export class ExpensesLogComponent implements OnInit {
     this.currentDaySpentInput.nativeElement.focus();
   }
 
-  ngAfterViewChecked() {
-    if (typeof this.currentDayEarnedInput !== 'undefined') {
-      this.currentDayEarnedInput.nativeElement.focus();
-    }    
+  ngAterViewChecked() {
+    // todo: use changeDetectorRef instead, https://stackoverflow.com/a/46043837/10845059
+    console.log('spent complete? ', this.spentInputComplete);
+    if (this.spentInputComplete) {
+      //this.currentDayEarnedInput && this.currentDayEarnedInput.nativeElement.focus();
+    }
+    //this.changeDetectorRef.detectChanges();
+    //if (typeof this.currentDayEarnedInput !== 'undefined') {
+    //  this.currentDayEarnedInput.nativeElement.focus();
+    //}
   }
 
   onKey(event: any) {
     if (event.key === 'Enter') {
       // number = 22. 22 3 (include space)
       // non numeric
-
       if (this.currentDay.spent) {
-        this.spentInputComplete = true;
-
-        
+        this.spentInputComplete = true;        
+        this.changeDetectorRef.detectChanges();
+        this.currentDayEarnedInput.nativeElement.focus();
       }
       if (this.currentDay.earned) {
         this.earnedInputComplete = true;
-      }
-      this.inputHelperTextVisible = false;
+      }      
     }
+    this.helperText();    
+  }
 
+  helperText() {
+    this.inputHelperTextVisible = false;
     if (this.currentDay.spent && !this.spentInputComplete) {
       this.inputHelperTextVisible = true;
     }

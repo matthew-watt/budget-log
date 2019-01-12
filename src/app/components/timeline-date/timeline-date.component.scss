@@ -1,0 +1,17 @@
+.date-hover {
+    position: absolute;
+    height: 50px;
+    width: 200px;
+    text-align: center;
+}
+
+.date:hover {
+    cursor: pointer;
+    color: #333;
+}
+
+.date {
+    font-size: 20px;
+    padding: 10px;
+    color: #888;
+}

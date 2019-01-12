@@ -16,15 +16,15 @@
   </div>
   <div class="container">
 
-    <div class="today" *ngIf="spentInputComplete && earnedInputComplete">
+    <div class="completed-input" *ngIf="spentInputComplete && earnedInputComplete">
       <div class="today-summary">
         <div class="today">
           <div class="today-label">Earned</div>
-          <div class="today-amount">{{currentDay.earned}}.00</div>
+          <div class="today-amount">${{currentDay.earned}}</div>
         </div>
         <div class="today">
           <div class="today-label">Spent</div>
-          <div class="today-amount">${{currentDay.spent}}.00</div>
+          <div class="today-amount">${{currentDay.spent}}</div>
         </div>        
       </div>
       <div class="summary-note">

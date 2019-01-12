@@ -7,12 +7,13 @@ import { AppComponent } from './app.component';
 import { ExpensesLogComponent } from './components/expenses-log/expenses-log.component';
 import { TimelineComponent } from './components/timeline/timeline.component';
 import { AchievementsComponent } from './components/achievements/achievements.component';
+import { TimelineDateComponent } from './components/timeline-date/timeline-date.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ExpensesLogComponent,    
-    TimelineComponent, AchievementsComponent
+    TimelineComponent, AchievementsComponent, TimelineDateComponent
   ],
   imports: [
     BrowserModule,

@@ -2,7 +2,19 @@
     color: red;
 }
 
+.date-hover {
+    position: absolute;
+    left: 100px;
+    top: 0;
+}
+
 .timeline-date {
     display: inline-block;
-    padding: 10px 20px;
+    //padding: 10px 20px;
+}
+
+app-timeline-date {
+    display: inline-block;
+    //padding: 10px 20px;
+    position: relative;
 }
