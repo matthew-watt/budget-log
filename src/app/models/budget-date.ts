@@ -4,6 +4,7 @@ export class BudgetDate {
     date: Moment;
     expenses: number;
     income: number;
+    saved: number;
 
     public constructor(init?:Partial<BudgetDate>) {
         Object.assign(this, init);
@@ -12,7 +13,7 @@ export class BudgetDate {
     isToday(): boolean {
         if (this.date.isSame(new Date(), 'day')) {
             return true;
-        }        
+        }
     }
 
 }

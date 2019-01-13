@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CurrentDay } from 'src/app/models/current-day';
+import { BudgetService } from 'src/app/services/budget/budget.service';
+import { BudgetDate } from 'src/app/models/budget-date';
 
 @Component({
   selector: 'app-expenses-log',
@@ -8,7 +10,7 @@ import { CurrentDay } from 'src/app/models/current-day';
 })
 export class ExpensesLogComponent implements OnInit {
   inputHelperTextVisible: boolean = false;
-  currentDay: CurrentDay;
+  currentDay: BudgetDate;
   spentInput: number = null;
   earnedInput: number = null;
   spentInputComplete: boolean = false;
@@ -24,12 +26,13 @@ export class ExpensesLogComponent implements OnInit {
   //  }
   //}
 
-  constructor(private changeDetectorRef: ChangeDetectorRef) { }
+  constructor(private changeDetectorRef: ChangeDetectorRef,
+              private budgetService: BudgetService) { }
 
   ngOnInit() {
-    this.currentDay = new CurrentDay({
-      spent: null,
-      earned: null
+    this.currentDay = new BudgetDate({
+      expenses: null,
+      income: null
     });
   }
 
@@ -53,24 +56,35 @@ export class ExpensesLogComponent implements OnInit {
     if (event.key === 'Enter') {
       // number = 22. 22 3 (include space)
       // non numeric
-      if (this.currentDay.spent) {
+      if (this.currentDay.expenses) {
         this.spentInputComplete = true;        
         this.changeDetectorRef.detectChanges();
         this.currentDayEarnedInput.nativeElement.focus();
       }
-      if (this.currentDay.earned) {
+      if (this.currentDay.income) {
         this.earnedInputComplete = true;
+        this.currentDay.saved = this.currentDay.income - this.currentDay.expenses;
       }      
     }
-    this.helperText();    
+
+    if (this.spentInputComplete && this.earnedInputComplete) {
+      this.budgetService.postBudgetDay(this.currentDay)
+                        .subscribe({
+                          next(result) {
+                            console.log(result);
+                          }
+                        });
+    }
+
+    this.helperText();
   }
 
   helperText() {
     this.inputHelperTextVisible = false;
-    if (this.currentDay.spent && !this.spentInputComplete) {
+    if (this.currentDay.expenses && !this.spentInputComplete) {
       this.inputHelperTextVisible = true;
     }
-    else if (this.currentDay.earned && this.spentInputComplete && !this.earnedInputComplete) {
+    else if (this.currentDay.income && this.spentInputComplete && !this.earnedInputComplete) {
       this.inputHelperTextVisible = true;
     }
     else {

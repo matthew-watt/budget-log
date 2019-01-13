@@ -20,26 +20,26 @@
       <div class="today-summary">
         <div class="today">
           <div class="today-label">Earned</div>
-          <div class="today-amount">${{currentDay.earned}}</div>
+          <div class="today-amount">${{currentDay.income}}</div>
         </div>
         <div class="today">
           <div class="today-label">Spent</div>
-          <div class="today-amount">${{currentDay.spent}}</div>
+          <div class="today-amount">${{currentDay.expenses}}</div>
         </div>        
       </div>
       <div class="summary-note">
-        Remember to log your spending tomorrow <a href="#">Setup reminders</a>
+        You saved ${{currentDay.saved}} Remember to log your spending tomorrow
       </div>
     </div>
 
     <div class="row input-row" *ngIf="!spentInputComplete || !earnedInputComplete">
         <div class="spending-input" *ngIf="!spentInputComplete">
           <label>How much did you spend today?</label>
-          <input [(ngModel)]="currentDay.spent" (keyup)="onKey($event)" #currentDaySpentInput>
+          <input [(ngModel)]="currentDay.expenses" (keyup)="onKey($event)" #currentDaySpentInput>
         </div>
         <div class="earnings-input" *ngIf="!earnedInputComplete && spentInputComplete">
           <label>How much did you earn today?</label>
-          <input [(ngModel)]="currentDay.earned" (keyup)="onKey($event)" #currentDayEarnedInput>
+          <input [(ngModel)]="currentDay.income" (keyup)="onKey($event)" #currentDayEarnedInput>
         </div>
         <div class="helper-text" *ngIf="inputHelperTextVisible">Press enter to continue</div>
     </div>
