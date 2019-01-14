@@ -1,6 +1,7 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { BudgetDate } from 'src/app/models/budget-date';
 import * as moment from 'moment';
+import { Moment } from 'moment';
 import { HostListener } from '@angular/core'
 import { BudgetService } from 'src/app/services/budget/budget.service';
 import { nextContext } from '@angular/core/src/render3';
@@ -12,60 +13,88 @@ import { nextContext } from '@angular/core/src/render3';
 })
 export class TimelineComponent implements OnInit {
   budgetDates: BudgetDate[] = [];
+  timelineDates: BudgetDate[] = [];
   dateCount: number = 5;
   previousDates: BudgetDate[] = [];
   screenWidth: number = window.innerWidth;
   @ViewChild('hover') hoverElement: ElementRef;
 
-  constructor(private budgetService: BudgetService) { }
+  constructor(private budgetService: BudgetService,
+              private changeDetectorRef: ChangeDetectorRef) { }
 
   ngOnInit() {    
-    this.generateDates();
     const now = moment().toISOString();
-    console.log('now', now);
     const startDate = moment().subtract('days', 4).format('YYYY-MM-DD').toString();
     const finishDate = moment().add('days', 4).format('YYYY-MM-DD').toString();
-    console.log('days to ', startDate, '....... ',  finishDate);
+
+    let self = this;
     this.budgetService.getBudgetDay(startDate, finishDate).subscribe({
       next(budgetDates) {
-        console.log('budget dates', budgetDates);
+        self.budgetDates = self.budgetDatesFromObjects(budgetDates);
+        console.log(self.budgetDates);
+        self.timelineDates = self.generateDates();
+        self.changeDetectorRef.detectChanges();
       }
-    });
+    });    
   }
 
-  ngAfterViewChecked() {
-    //this.hoverElement.nativeElement.offsetLeft;
-    //console.log(this.hoverElement.nativeElement.offsetLeft);
+  budgetDatesFromObjects(objects) {
+    let budgetDates: BudgetDate[] = [];
+    for (let obj of objects) {
+      const budgetDate = new BudgetDate({
+        moment: moment(obj.Date),
+        date: obj.Date,
+        income: obj.Income,
+        expenses: obj.Expenses
+      });
+      budgetDates.push(budgetDate);
+    }
+    return budgetDates;
   }
 
   generateDates() {
-    // start with existing budgeted dates, fetch from server
-    // append the future dates
-    
+    let timelineDates: BudgetDate[] = [];
 
-    if (this.screenWidth > 1200) {
-      this.dateCount = 4;
-    }
-    else if (this.screenWidth > 800) {
-      this.dateCount = 3;
-    }
-    else if (this.screenWidth > 600) {
-      this.dateCount = 2;
-    }
-    else {
-      this.dateCount = 1;
+    var start = moment().subtract(7, 'd').startOf('d');
+    var end = moment().add(1, 'd').startOf('d');
+    var days: Moment[] = [];
+    var day = start;
+
+    while (day <= end) {
+        days.push(day);
+        day = day.clone().add(1, 'd');
     }
 
-    this.budgetDates = [];
-    for (let i = -1 * this.dateCount; i < this.dateCount + 1; i++) {
-      var budgetDate = new BudgetDate ({
-        date: moment().add(i, 'days'),
-        expenses: 0,
-        income: 0,
-      });
+    for (let day of days) {
+      let added = false;
+      for (let budgetDay of this.budgetDates) {
 
-      this.budgetDates.push(budgetDate);
+        console.log(day);
+        console.log(budgetDay);
+        console.log('--------');
+        if (day.isSame(budgetDay.moment)) {
+          
+          timelineDates.push(budgetDay);
+          added = true;
+        }
+      }
+      if (!added) {
+        timelineDates.push(new BudgetDate({
+          moment: day,
+          date: day.format('YYYY-MM-DD'),
+          expenses: 0,
+          income: 0
+        }));
+      }
     }
+
+    return timelineDates;
+  }
+
+  generateDatesFind() {
+    // each day
+    // find: day == budget day add
+    // if not found: new/convert date
   }
 
   mouseEnter(event) {
@@ -75,7 +104,7 @@ export class TimelineComponent implements OnInit {
   @HostListener('window:resize', ['$event'])
   onResize(event) {
     this.screenWidth = window.innerWidth;
-    this.generateDates();
+    this.timelineDates = this.generateDates();
   }
 
 }

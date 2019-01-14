@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@an
 import { CurrentDay } from 'src/app/models/current-day';
 import { BudgetService } from 'src/app/services/budget/budget.service';
 import { BudgetDate } from 'src/app/models/budget-date';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-expenses-log',
@@ -19,20 +20,15 @@ export class ExpensesLogComponent implements OnInit {
   @ViewChild("currentDaySpentInput") currentDaySpentInput: ElementRef;
   @ViewChild("currentDayEarnedInput") currentDayEarnedInput: ElementRef;
 
-  //private currentDayEarnedInput: ElementRef;
-  //@ViewChild('currentDayEarnedInput') set input(input: ElementRef) {
-  //  if (input !== null) {
-  //    this.currentDayEarnedInput = input;
-  //  }
-  //}
-
   constructor(private changeDetectorRef: ChangeDetectorRef,
               private budgetService: BudgetService) { }
 
   ngOnInit() {
     this.currentDay = new BudgetDate({
       expenses: null,
-      income: null
+      income: null,
+      date: moment().format('YYYY-MM-DD').toString(),
+      moment: moment()
     });
   }
 
@@ -40,31 +36,22 @@ export class ExpensesLogComponent implements OnInit {
     this.currentDaySpentInput.nativeElement.focus();
   }
 
-  ngAterViewChecked() {
-    // todo: use changeDetectorRef instead, https://stackoverflow.com/a/46043837/10845059
-    console.log('spent complete? ', this.spentInputComplete);
-    if (this.spentInputComplete) {
-      //this.currentDayEarnedInput && this.currentDayEarnedInput.nativeElement.focus();
-    }
-    //this.changeDetectorRef.detectChanges();
-    //if (typeof this.currentDayEarnedInput !== 'undefined') {
-    //  this.currentDayEarnedInput.nativeElement.focus();
-    //}
-  }
-
   onKey(event: any) {
+
+    console.log('current day', this.currentDay);
+
     if (event.key === 'Enter') {
       // number = 22. 22 3 (include space)
       // non numeric
       if (this.currentDay.expenses) {
-        this.spentInputComplete = true;        
+        this.spentInputComplete = true;
         this.changeDetectorRef.detectChanges();
         this.currentDayEarnedInput.nativeElement.focus();
       }
       if (this.currentDay.income) {
         this.earnedInputComplete = true;
         this.currentDay.saved = this.currentDay.income - this.currentDay.expenses;
-      }      
+      }
     }
 
     if (this.spentInputComplete && this.earnedInputComplete) {

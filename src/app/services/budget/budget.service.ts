@@ -24,11 +24,10 @@ export class BudgetService {
     params.set('start_date', startDate);
     params.set('finish_date', finishDate);
 
-    console.log('fetching dates');
 
     return this.http.get<BudgetDate[]>(this.apiRoot + '/api/budgetdays', { params: params })
       .pipe(
-        tap(budgetDate => console.log('fetched budget dates tap', budgetDate)),
+        //tap(budgetDate => console.log('fetched budget dates tap', budgetDate)),
         catchError(this.handleError('getBudgetDates', []))
       );
   }

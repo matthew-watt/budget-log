@@ -30,6 +30,7 @@ export class TimelineDateComponent implements OnInit {
   }
 
   onMouseEnter() {
+    console.log(this.budgetDate);
     this.hoverVisible = true;
   }
 

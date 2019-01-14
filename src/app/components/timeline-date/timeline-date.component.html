@@ -1,12 +1,15 @@
-<div class="date"
+<div class="timeline-date"
      (mouseenter)="onMouseEnter()"
      (mouseleave)="onMouseLeave()">
-  {{budgetDate.date.format("MMM Do")}}
+  <div class="row date">{{budgetDate.moment.format("MMM Do")}}</div>
+  <div class="row">Earned ${{budgetDate.income}}</div>
+  <div class="row">Spent ${{budgetDate.expenses}}</div>
 </div>
+
+<!-- not using -->
 <div class="date-hover"
      [style.top.px]="offsetTopHover"
      [style.left.px]="offsetLeftHover"
-     *ngIf="hoverVisible"
-     #hover>
-  spent: $100, earned: $200
+     *ngIf="true"
+     #hover>  
 </div>
