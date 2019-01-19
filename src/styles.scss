@@ -1,6 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 @import url('https://fonts.googleapis.com/css?family=Roboto');
 
+
+
 html, body {
     margin: 0;
     padding: 0;
@@ -58,7 +60,15 @@ app-timeline {
     display: flex;
 }
 
+app-goal-status {
+
+}
+
 app-achievements {
+    
+}
+
+.right-sidebar {
     position: fixed;
     right: 0;
     top: 0;

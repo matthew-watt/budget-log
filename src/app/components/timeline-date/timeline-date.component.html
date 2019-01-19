@@ -2,8 +2,22 @@
      (mouseenter)="onMouseEnter()"
      (mouseleave)="onMouseLeave()">
   <div class="row date">{{budgetDate.moment.format("MMM Do")}}</div>
-  <div class="row">Earned ${{budgetDate.income}}</div>
-  <div class="row">Spent ${{budgetDate.expenses}}</div>
+  <div *ngIf="budgetDate.onServer">
+    <div class="row">Earned ${{budgetDate.income}}</div>
+    <div class="row">Spent ${{budgetDate.expenses}}</div>
+  </div>
+  <div class="incomplete-day" *ngIf="!budgetDate.onServer">
+    <div class="row">
+        <div *ngIf="!hoverVisible">
+          ?
+        </div>
+        <div *ngIf="hoverVisible">
+          <i class="material-icons">
+            edit
+          </i>
+        </div>
+    </div>
+  </div>
 </div>
 
 <!-- not using -->
@@ -11,5 +25,6 @@
      [style.top.px]="offsetTopHover"
      [style.left.px]="offsetLeftHover"
      *ngIf="true"
-     #hover>  
+     #hover>
+     
 </div>

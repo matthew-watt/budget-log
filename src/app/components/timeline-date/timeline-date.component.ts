@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ViewChild, ChangeDetectorRef, HostListener  } from '@angular/core';
 import * as moment from 'moment';
 import { BudgetDate } from 'src/app/models/budget-date';
 
@@ -16,13 +16,14 @@ export class TimelineDateComponent implements OnInit {
   offsetLeftHover: number = 0;
 
   constructor(private elementRef: ElementRef,
-              private changeDetectorRef: ChangeDetectorRef) {  }
+              private changeDetectorRef: ChangeDetectorRef) { }
 
-  ngOnInit() {  }
+  ngOnInit() {
+  }
 
   ngAfterViewChecked() {
     if (this.hoverElement) {
-      console.log(this.hoverElement.nativeElement.offsetHeight);
+      console.log('height', this.hoverElement.nativeElement.offsetHeight);
       this.offsetTopHover = -1 * (this.hoverElement.nativeElement.offsetHeight);
       this.offsetLeftHover = -1 * (this.hoverElement.nativeElement.offsetWidth - this.elementRef.nativeElement.offsetWidth) / 2 // date.width - hover.width / 2
       this.changeDetectorRef.detectChanges();
@@ -36,6 +37,16 @@ export class TimelineDateComponent implements OnInit {
 
   onMouseLeave() {
     this.hoverVisible = false;
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    if (this.hoverElement) {
+      console.log('height', this.hoverElement.nativeElement.offsetHeight);
+      this.offsetTopHover = -1 * (this.hoverElement.nativeElement.offsetHeight) + 20;
+      this.offsetLeftHover = -1 * (this.hoverElement.nativeElement.offsetWidth - this.elementRef.nativeElement.offsetWidth) / 2 // date.width - hover.width / 2
+      this.changeDetectorRef.detectChanges();
+    }
   }
 
 }

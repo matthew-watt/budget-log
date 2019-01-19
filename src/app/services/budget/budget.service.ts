@@ -19,11 +19,10 @@ export class BudgetService {
 
   constructor(private http: HttpClient) { }
 
-  getBudgetDay(startDate: string, finishDate: string): Observable<BudgetDate[]> {
+  getBudgetDays(startDate: string, finishDate: string): Observable<BudgetDate[]> {
     const params = new HttpParams();
     params.set('start_date', startDate);
     params.set('finish_date', finishDate);
-
 
     return this.http.get<BudgetDate[]>(this.apiRoot + '/api/budgetdays', { params: params })
       .pipe(

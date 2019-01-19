@@ -1,8 +1,11 @@
 .date-hover {
     position: absolute;
     height: 50px;
-    width: 200px;
+    //width: 200px;
     text-align: center;
+    i {
+        font-size: 32px;
+    }
 }
 
 .date:hover {
@@ -18,4 +21,8 @@
 .date {
     font-size: 20px;
     font-weight: bold;
+}
+
+.incomplete-day {
+    font-size: 36px;
 }

@@ -1,6 +1,6 @@
 <div class="page">
   <div class="summary-today">    
-    <div class="summary-date">1st February 2019</div>
+    <div class="summary-date">{{currentDay.date}}</div>
     <div class="logged-days row">120 days budgeting</div>
     <div class="budget-summary">      
       <div class="total-income row">
@@ -52,5 +52,8 @@
   </div>
 </div>
 
-<app-timeline class="timeline"></app-timeline>
-<app-achievements></app-achievements>
+<app-timeline [budgetDates]="timelineBudgetDates" class="timeline"></app-timeline>
+<div class="right-sidebar">
+  <app-goal-status></app-goal-status>
+  <app-achievements></app-achievements>
+</div>

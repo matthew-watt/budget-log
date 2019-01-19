@@ -9,12 +9,13 @@ import { ExpensesLogComponent } from './components/expenses-log/expenses-log.com
 import { TimelineComponent } from './components/timeline/timeline.component';
 import { AchievementsComponent } from './components/achievements/achievements.component';
 import { TimelineDateComponent } from './components/timeline-date/timeline-date.component';
+import { GoalStatusComponent } from './components/goal-status/goal-status.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ExpensesLogComponent,    
-    TimelineComponent, AchievementsComponent, TimelineDateComponent
+    TimelineComponent, AchievementsComponent, TimelineDateComponent, GoalStatusComponent
   ],
   imports: [
     BrowserModule,
