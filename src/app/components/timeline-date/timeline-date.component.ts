@@ -41,7 +41,7 @@ export class TimelineDateComponent implements OnInit {
   }
 
   onMouseEnter() {
-    console.log('hover')
+    console.log('hover');
     this.hoverVisible = true;
   }
 

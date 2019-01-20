@@ -1,20 +1,15 @@
 <div class="timeline-date"
-     (onMouseEnter)="onMouseEnter($event)"
-     (onMouseLeave)="onMouseLeave()"
+     (mouseenter)="onMouseEnter()"
+     (mouseleave)="onMouseLeave()"
      (click)="onClick()">
+  <div class="edit">
+    <i *ngIf="hoverVisible" class="material-icons">edit</i>
+  </div>
   <div class="row date">{{budgetDate.moment.format("MMM Do")}}</div>
   <div *ngIf="budgetDate.onServer">
     <div class="row">Earned ${{budgetDate.income}}</div>
-    <div class="row">Spent ${{budgetDate.expenses}}</div>
+    <div class="row">Spent ${{budgetDate.expenses}}</div>    
   </div>
-        <div *ngIf="!hoverVisible && !budgetDate.onServer">
-          ?
-        </div>
-        <div *ngIf="hoverVisible">
-          <i class="material-icons">
-            edit
-          </i>
-        </div>
 </div>
 
 <!-- not using -->
