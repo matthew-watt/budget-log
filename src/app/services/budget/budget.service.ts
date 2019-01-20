@@ -27,7 +27,8 @@ export class BudgetService {
     return this.http.get<BudgetDate[]>(this.apiRoot + '/api/budgetdays', { params: params })
       .pipe(
         //tap(budgetDate => console.log('fetched budget dates tap', budgetDate)),
-        catchError(this.handleError('getBudgetDates', []))
+        catchError((error: any) => Observable.throw(error))
+        //catchError(this.handleError('getBudgetDates', []))
       );
   }
 

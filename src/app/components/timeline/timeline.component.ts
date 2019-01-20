@@ -20,7 +20,6 @@ export class TimelineComponent implements OnInit {
   // editing a timeline date < 2 way data binding
   @Input()
   set editing(editing: boolean) {
-    console.log('emitting edit to parent component');
     this.editingChange.emit(editing);
   }
 
@@ -44,7 +43,7 @@ export class TimelineComponent implements OnInit {
 
   ngOnInit() {
     //this.timelineDates = this.updateTimeline();
-    this.editing
+    //this.editing
   }
 
   edit() {
@@ -54,23 +53,19 @@ export class TimelineComponent implements OnInit {
 
   updateTimeline() {
     this.updateTimelineLength(window.innerWidth);
-    console.log(this.budgetDates);
     if (this.budgetDates.length > 0) {
 
       let rangeDates = this.datesOfRange(moment().subtract(this.timelineLength, 'd'), moment().add(1, 'd'));
 
       //this.budgetDates = this.fillRangeGaps(this.budgetDates);
 
-      console.log('dates of range', rangeDates);
-      console.log('all budget dates', this.budgetDates);
+      //console.log('dates of range', rangeDates);
+      //console.log('all budget dates', this.budgetDates);
 
       let timelineDates = this.budgetDates.filter(bd => rangeDates.find(d => d.isSame(bd.moment)));
-      console.log('timeline dates filtered to budget dates', timelineDates);
       // dates in rangeDates and not in timelineDates become Budget dates
       let incompleteDates = rangeDates.filter(rd => !timelineDates.find(td => rd.isSame(td.moment)));
-      console.log('incomplete dates', incompleteDates);
-      let incompleteBudgetDates = this.datesToBudgetDates(incompleteDates);
-      console.log('incomlete BudgetDates', incompleteBudgetDates);
+      let incompleteBudgetDates = this.datesToBudgetDates(incompleteDates, true);
       this.timelineDates = timelineDates.concat(incompleteBudgetDates);
     }
   }
@@ -92,14 +87,13 @@ export class TimelineComponent implements OnInit {
     for (let date of dates) {
       budgetDates.push(new BudgetDate({
         moment: date,
-        onServer: onServer
+        onServer: false
       }));
     }
     return budgetDates;
   }
 
   updateTimelineLength(screenWidth: number) {
-    console.log('width', screenWidth);
     if (screenWidth < 400) {
       this.timelineLength = 2;
     }

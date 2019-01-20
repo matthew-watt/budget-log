@@ -13,17 +13,26 @@ export class BudgetDate {
         this._date = date;
     }
 
+    private _moment: Moment;
+    set moment(moment: Moment) {
+        this._moment = moment;
+        this._date = moment.toString();
+    }
+    get moment(): Moment {
+        return this._moment;
+    }
+
     expenses: number;
     income: number;
     saved: number;
-    moment: Moment;
     format: string = 'MMMM Do YYYY';
-    onServer: boolean = true; // apply on server
+    onServer: boolean = false; // apply on server
 
     public constructor(init?:Partial<BudgetDate>) {
         Object.assign(this, init);
         //this.date = moment().format(this.format);
         let self = this;
+        //this.date = moment().toString();
         //setInterval(() => self.date = moment().format('MMMM Do YYYY'), 1000 * 30);
     }
 

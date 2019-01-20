@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CurrentDay } from 'src/app/models/current-day';
 import { BudgetService } from 'src/app/services/budget/budget.service';
+import { BudgetTestService } from 'src/app/services/budget-test/budget-test.service';
 import { TimelineService } from 'src/app/services/timeline/timline.service';
 import { BudgetDate } from 'src/app/models/budget-date';
 import * as moment from 'moment';
@@ -28,6 +29,7 @@ export class ExpensesLogComponent implements OnInit {
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
               private budgetService: BudgetService,
+              private budgetTestService: BudgetTestService,
               private timelineService: TimelineService) { }
 
   ngOnInit() {
@@ -104,6 +106,18 @@ export class ExpensesLogComponent implements OnInit {
       next(budgetDates) {
         console.log(budgetDates);
         self.timelineBudgetDates = self.processDates(budgetDates);
+      },
+      error(error) {
+        console.log('error: could not fetch budgetDates');
+        console.log('fetching budget dates from test service');
+        self.budgetTestService.getBudgetDates(startDate, finishDate).subscribe({
+          next(budgetDates) {
+            console.log(budgetDates);
+            self.timelineBudgetDates = budgetDates;
+            //self.changeDetectorRef.detectChanges();
+          },
+          error(error) {}
+        });
       }
     });
   }
@@ -120,7 +134,6 @@ export class ExpensesLogComponent implements OnInit {
       budgetDates.push(budgetDate);      
     }
     budgetDates.push(this.currentDay);
-    console.log(budgetDates);
     return budgetDates;
   }
 

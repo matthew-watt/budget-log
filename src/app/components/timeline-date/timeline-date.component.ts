@@ -9,7 +9,7 @@ import { BudgetDate } from 'src/app/models/budget-date';
 })
 export class TimelineDateComponent implements OnInit {
 
-  @Input() hoverVisible: boolean = false;
+  hoverVisible: boolean = false;
   @Input() budgetDate: BudgetDate;
   @Output() editingChange = new EventEmitter();
   @Input() editing: boolean;
@@ -23,6 +23,7 @@ export class TimelineDateComponent implements OnInit {
   ngOnInit() {
   }
 
+  /*
   ngAfterViewChecked() {
     if (this.hoverElement) {
       console.log('height', this.hoverElement.nativeElement.offsetHeight);
@@ -31,6 +32,7 @@ export class TimelineDateComponent implements OnInit {
       this.changeDetectorRef.detectChanges();
     }
   }
+  */
 
   onClick() {
     console.log(this.budgetDate);
@@ -38,7 +40,8 @@ export class TimelineDateComponent implements OnInit {
     this.editingChange.emit(this.editing);
   }
 
-  onMouseEnter() {    
+  onMouseEnter() {
+    console.log('hover')
     this.hoverVisible = true;
   }
 

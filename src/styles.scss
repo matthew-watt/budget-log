@@ -58,6 +58,7 @@ app-timeline {
     flex-wrap: wrap;
     justify-content: space-between;
     display: flex;
+    z-index: 1000;
 }
 
 app-goal-status {
