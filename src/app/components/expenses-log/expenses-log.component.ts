@@ -59,6 +59,11 @@ export class ExpensesLogComponent implements OnInit {
                         .subscribe({
                           next(result) {
                             console.log(result);
+
+                            // if on income update on start of new week
+                            // d3 bar, x weeks complete, amount, %
+                            
+                            // else update on each input
                           }
                         });
     }
