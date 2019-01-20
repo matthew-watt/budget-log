@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { BudgetDate } from 'src/app/models/budget-date';
 import * as moment from 'moment';
 import { Moment } from 'moment';
@@ -12,99 +12,111 @@ import { nextContext } from '@angular/core/src/render3';
   styleUrls: ['./timeline.component.scss']
 })
 export class TimelineComponent implements OnInit {
-  budgetDates: BudgetDate[] = [];
-  timelineDates: BudgetDate[] = [];
-  dateCount: number = 5;
-  previousDates: BudgetDate[] = [];
+  
+  timelineDates: BudgetDate[] = [];  
   screenWidth: number = window.innerWidth;
+  timelineLength: number;
+
+  // editing a timeline date < 2 way data binding
+  @Input()
+  set editing(editing: boolean) {
+    console.log('emitting edit to parent component');
+    this.editingChange.emit(editing);
+  }
+
+  @Output() editingChange = new EventEmitter();
+
+  private _budgetDates;
+  @Input()
+  set budgetDates(dates: BudgetDate[]) {
+    this._budgetDates = dates;
+    this.updateTimeline();
+  }
+  get budgetDates(): BudgetDate[] {
+    return this._budgetDates;
+  }
+
+  //@Input() currentDay: BudgetDate;
   @ViewChild('hover') hoverElement: ElementRef;
 
   constructor(private budgetService: BudgetService,
               private changeDetectorRef: ChangeDetectorRef) { }
 
-  ngOnInit() {    
-    const now = moment().toISOString();
-    const startDate = moment().subtract('days', 4).format('YYYY-MM-DD').toString();
-    const finishDate = moment().add('days', 4).format('YYYY-MM-DD').toString();
-
-    let self = this;
-    this.budgetService.getBudgetDay(startDate, finishDate).subscribe({
-      next(budgetDates) {
-        self.budgetDates = self.budgetDatesFromObjects(budgetDates);
-        console.log(self.budgetDates);
-        self.timelineDates = self.generateDates();
-        self.changeDetectorRef.detectChanges();
-      }
-    });    
+  ngOnInit() {
+    //this.timelineDates = this.updateTimeline();
+    this.editing
   }
 
-  budgetDatesFromObjects(objects) {
+  edit() {
+    this.editing = true;
+    this.editingChange.emit(this.editing);
+  }
+
+  updateTimeline() {
+    this.updateTimelineLength(window.innerWidth);
+    console.log(this.budgetDates);
+    if (this.budgetDates.length > 0) {
+
+      let rangeDates = this.datesOfRange(moment().subtract(this.timelineLength, 'd'), moment().add(1, 'd'));
+
+      //this.budgetDates = this.fillRangeGaps(this.budgetDates);
+
+      console.log('dates of range', rangeDates);
+      console.log('all budget dates', this.budgetDates);
+
+      let timelineDates = this.budgetDates.filter(bd => rangeDates.find(d => d.isSame(bd.moment)));
+      console.log('timeline dates filtered to budget dates', timelineDates);
+      // dates in rangeDates and not in timelineDates become Budget dates
+      let incompleteDates = rangeDates.filter(rd => !timelineDates.find(td => rd.isSame(td.moment)));
+      console.log('incomplete dates', incompleteDates);
+      let incompleteBudgetDates = this.datesToBudgetDates(incompleteDates);
+      console.log('incomlete BudgetDates', incompleteBudgetDates);
+      this.timelineDates = timelineDates.concat(incompleteBudgetDates);
+    }
+  }
+
+  datesOfRange(start: Moment, end: Moment) {
+    let day = start;
+    let dates: Moment[] = [];
+    while (day.isSameOrBefore(end)) {
+      let cloneDay = day.clone();
+      cloneDay.startOf('d');
+      dates.push(cloneDay);
+      day.add(1, 'd');
+    }
+    return dates;
+  }
+
+  datesToBudgetDates(dates: Moment[], onServer: boolean = false): BudgetDate[] {
     let budgetDates: BudgetDate[] = [];
-    for (let obj of objects) {
-      const budgetDate = new BudgetDate({
-        moment: moment(obj.Date),
-        date: obj.Date,
-        income: obj.Income,
-        expenses: obj.Expenses
-      });
-      budgetDates.push(budgetDate);
+    for (let date of dates) {
+      budgetDates.push(new BudgetDate({
+        moment: date,
+        onServer: onServer
+      }));
     }
     return budgetDates;
   }
 
-  generateDates() {
-    let timelineDates: BudgetDate[] = [];
-
-    var start = moment().subtract(7, 'd').startOf('d');
-    var end = moment().add(1, 'd').startOf('d');
-    var days: Moment[] = [];
-    var day = start;
-
-    while (day <= end) {
-        days.push(day);
-        day = day.clone().add(1, 'd');
+  updateTimelineLength(screenWidth: number) {
+    console.log('width', screenWidth);
+    if (screenWidth < 400) {
+      this.timelineLength = 2;
     }
-
-    for (let day of days) {
-      let added = false;
-      for (let budgetDay of this.budgetDates) {
-
-        console.log(day);
-        console.log(budgetDay);
-        console.log('--------');
-        if (day.isSame(budgetDay.moment)) {
-          
-          timelineDates.push(budgetDay);
-          added = true;
-        }
-      }
-      if (!added) {
-        timelineDates.push(new BudgetDate({
-          moment: day,
-          date: day.format('YYYY-MM-DD'),
-          expenses: 0,
-          income: 0
-        }));
-      }
+    else if (screenWidth < 720) {
+      this.timelineLength = 3;
     }
-
-    return timelineDates;
-  }
-
-  generateDatesFind() {
-    // each day
-    // find: day == budget day add
-    // if not found: new/convert date
-  }
-
-  mouseEnter(event) {
-    console.log(event);
+    else if (screenWidth < 1200) {
+      this.timelineLength = 4;
+    }
+    else {
+      this.timelineLength = 5;
+    }
   }
 
   @HostListener('window:resize', ['$event'])
-  onResize(event) {
-    this.screenWidth = window.innerWidth;
-    this.timelineDates = this.generateDates();
+  onResize(event) {    
+    this.updateTimeline();
   }
 
 }

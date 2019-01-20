@@ -1,6 +1,10 @@
+<div>
+  {{editing}}
+</div>
 <div class="timeline-date"
       *ngFor="let date of timelineDates"
-      [ngClass]="{ 'date-today': date.isToday() }"
-      (mouseenter)="mouseEnter($event)">
-  <app-timeline-date [budgetDate]="date"></app-timeline-date>
+      [ngClass]="{ 'date-today': date.isToday() }">
+  <app-timeline-date [budgetDate]="date"
+                     [(editing)]="editing">
+  </app-timeline-date>
 </div>

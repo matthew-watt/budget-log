@@ -1,8 +1,10 @@
 import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CurrentDay } from 'src/app/models/current-day';
 import { BudgetService } from 'src/app/services/budget/budget.service';
+import { TimelineService } from 'src/app/services/timeline/timline.service';
 import { BudgetDate } from 'src/app/models/budget-date';
 import * as moment from 'moment';
+import { Moment } from 'moment';
 
 @Component({
   selector: 'app-expenses-log',
@@ -16,19 +18,25 @@ export class ExpensesLogComponent implements OnInit {
   earnedInput: number = null;
   spentInputComplete: boolean = false;
   earnedInputComplete: boolean = false;
+  now: Moment;
+  timelineBudgetDates: BudgetDate[];
+
+  editingDate: boolean;
 
   @ViewChild("currentDaySpentInput") currentDaySpentInput: ElementRef;
   @ViewChild("currentDayEarnedInput") currentDayEarnedInput: ElementRef;
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
-              private budgetService: BudgetService) { }
+              private budgetService: BudgetService,
+              private timelineService: TimelineService) { }
 
   ngOnInit() {
+    this.getBudgetDates();
     this.currentDay = new BudgetDate({
       expenses: null,
       income: null,
-      date: moment().format('YYYY-MM-DD').toString(),
-      moment: moment()
+      moment: moment(),
+      onServer: false
     });
   }
 
@@ -54,16 +62,17 @@ export class ExpensesLogComponent implements OnInit {
       }
     }
 
+    // completed budget logging for the day
     if (this.spentInputComplete && this.earnedInputComplete) {
+      let self = this;
       this.budgetService.postBudgetDay(this.currentDay)
                         .subscribe({
                           next(result) {
                             console.log(result);
-
-                            // if on income update on start of new week
-                            // d3 bar, x weeks complete, amount, %
-                            
-                            // else update on each input
+                            self.currentDay.onServer = true;
+                          },
+                          error(error) {
+                            console.log(error);
                           }
                         });
     }
@@ -82,6 +91,37 @@ export class ExpensesLogComponent implements OnInit {
     else {
       this.inputHelperTextVisible = false;
     }
+  }
+
+  getBudgetDates() {
+    const startDate = moment().subtract('days', 4).format('YYYY-MM-DD').toString();
+    const finishDate = moment().add('days', 4).format('YYYY-MM-DD').toString();
+
+    let self = this;
+    this.timelineBudgetDates = [];
+
+    this.budgetService.getBudgetDays(startDate, finishDate).subscribe({
+      next(budgetDates) {
+        console.log(budgetDates);
+        self.timelineBudgetDates = self.processDates(budgetDates);
+      }
+    });
+  }
+
+  processDates(objects) {
+    let budgetDates: BudgetDate[] = [];
+    for (let obj of objects) {
+      const budgetDate = new BudgetDate({
+        moment: moment(obj.Date),
+        date: obj.Date,
+        income: obj.Income,
+        expenses: obj.Expenses
+      });
+      budgetDates.push(budgetDate);      
+    }
+    budgetDates.push(this.currentDay);
+    console.log(budgetDates);
+    return budgetDates;
   }
 
 }
