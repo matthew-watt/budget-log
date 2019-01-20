@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ElementRef, ViewChild, ChangeDetectorRef, HostListener  } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ViewChild, ChangeDetectorRef, HostListener, EventEmitter, Output  } from '@angular/core';
 import * as moment from 'moment';
 import { BudgetDate } from 'src/app/models/budget-date';
 
@@ -11,6 +11,8 @@ export class TimelineDateComponent implements OnInit {
 
   @Input() hoverVisible: boolean = false;
   @Input() budgetDate: BudgetDate;
+  @Output() editingChange = new EventEmitter();
+  @Input() editing: boolean;
   @ViewChild('hover') hoverElement: ElementRef;
   offsetTopHover: number = 0;
   offsetLeftHover: number = 0;
@@ -30,8 +32,13 @@ export class TimelineDateComponent implements OnInit {
     }
   }
 
-  onMouseEnter() {
+  onClick() {
     console.log(this.budgetDate);
+    this.editing = true;
+    this.editingChange.emit(this.editing);
+  }
+
+  onMouseEnter() {    
     this.hoverVisible = true;
   }
 

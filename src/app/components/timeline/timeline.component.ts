@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { BudgetDate } from 'src/app/models/budget-date';
 import * as moment from 'moment';
 import { Moment } from 'moment';
@@ -16,6 +16,15 @@ export class TimelineComponent implements OnInit {
   timelineDates: BudgetDate[] = [];  
   screenWidth: number = window.innerWidth;
   timelineLength: number;
+
+  // editing a timeline date < 2 way data binding
+  @Input()
+  set editing(editing: boolean) {
+    console.log('emitting edit to parent component');
+    this.editingChange.emit(editing);
+  }
+
+  @Output() editingChange = new EventEmitter();
 
   private _budgetDates;
   @Input()
@@ -35,6 +44,12 @@ export class TimelineComponent implements OnInit {
 
   ngOnInit() {
     //this.timelineDates = this.updateTimeline();
+    this.editing
+  }
+
+  edit() {
+    this.editing = true;
+    this.editingChange.emit(this.editing);
   }
 
   updateTimeline() {
@@ -97,10 +112,6 @@ export class TimelineComponent implements OnInit {
     else {
       this.timelineLength = 5;
     }
-  }
-
-  mouseEnter(event) {
-    console.log(event);
   }
 
   @HostListener('window:resize', ['$event'])

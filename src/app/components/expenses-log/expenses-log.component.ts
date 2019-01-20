@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CurrentDay } from 'src/app/models/current-day';
 import { BudgetService } from 'src/app/services/budget/budget.service';
+import { TimelineService } from 'src/app/services/timeline/timline.service';
 import { BudgetDate } from 'src/app/models/budget-date';
 import * as moment from 'moment';
 import { Moment } from 'moment';
@@ -20,11 +21,14 @@ export class ExpensesLogComponent implements OnInit {
   now: Moment;
   timelineBudgetDates: BudgetDate[];
 
+  editingDate: boolean;
+
   @ViewChild("currentDaySpentInput") currentDaySpentInput: ElementRef;
   @ViewChild("currentDayEarnedInput") currentDayEarnedInput: ElementRef;
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
-              private budgetService: BudgetService) { }
+              private budgetService: BudgetService,
+              private timelineService: TimelineService) { }
 
   ngOnInit() {
     this.getBudgetDates();
@@ -58,6 +62,7 @@ export class ExpensesLogComponent implements OnInit {
       }
     }
 
+    // completed budget logging for the day
     if (this.spentInputComplete && this.earnedInputComplete) {
       let self = this;
       this.budgetService.postBudgetDay(this.currentDay)
