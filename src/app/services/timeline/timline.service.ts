@@ -7,19 +7,32 @@ import { Observable, Observer } from 'rxjs';
 })
 export class TimelineService {
 
+  editingBudgetDate: BudgetDate;
+  editSubscriptionHandler = function(observer: Observer<BudgetDate>) {
+    observer.next(this.editingBudgetDate);
+    observer.complete;
+  };
 
   constructor() { }
 
-  editBudgetDate(budgetDate: BudgetDate): Observable<BudgetDate> {
+  // subscribe to this
+  // 
+  onBudgetDateEdit(): Observable<BudgetDate> {
+    const update = new Observable(this.editSubscriptionHandler);
+    return update;
+  }
 
-    
+  editBudgetDate(budgetDate: BudgetDate) {
+    this.editingBudgetDate = budgetDate;
 
-    const editSubscription = function(observer: Observer<BudgetDate>) {
-      observer.next(budgetDate);
+    const update = function(observer: Observer<BudgetDate>) {
+      observer.next(this.editBudgetDate)
       observer.complete;
     };
-    const update = new Observable(editSubscription);
-    return update;
+
+    //this.editSubscriptionHandler.;
+
+    //this.editSubscriptionHandler();
   }
 
 }
