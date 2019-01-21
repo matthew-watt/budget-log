@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, ElementRef, ViewChild, ChangeDetectorRef, HostListener, EventEmitter, Output  } from '@angular/core';
 import * as moment from 'moment';
 import { BudgetDate } from 'src/app/models/budget-date';
+import { TimelineService } from 'src/app/services/timeline/timline.service';
 
 @Component({
   selector: 'app-timeline-date',
@@ -17,10 +18,12 @@ export class TimelineDateComponent implements OnInit {
   offsetTopHover: number = 0;
   offsetLeftHover: number = 0;
 
-  constructor(private elementRef: ElementRef,
+  constructor(private timelineService: TimelineService,
+              private elementRef: ElementRef,
               private changeDetectorRef: ChangeDetectorRef) { }
 
   ngOnInit() {
+    
   }
 
   /*
@@ -37,7 +40,8 @@ export class TimelineDateComponent implements OnInit {
   onClick() {
     console.log(this.budgetDate);
     this.editing = true;
-    this.editingChange.emit(this.editing);
+    this.timelineService.editBudgetDate(this.budgetDate);
+    //this.editingChange.emit(this.editing);
   }
 
   onMouseEnter() {

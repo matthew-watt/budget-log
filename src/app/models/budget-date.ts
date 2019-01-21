@@ -14,9 +14,9 @@ export class BudgetDate {
     }
 
     private _moment: Moment;
-    set moment(moment: Moment) {
-        this._moment = moment;
-        this._date = moment.toString();
+    set moment(m: Moment) {
+        this._moment = m;
+        this._date = this._moment.toString();
     }
     get moment(): Moment {
         return this._moment;

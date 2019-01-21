@@ -22,7 +22,6 @@ export class ExpensesLogComponent implements OnInit {
   now: Moment;
   timelineBudgetDates: BudgetDate[];
 
-  editingDate: boolean;
 
   @ViewChild("currentDaySpentInput") currentDaySpentInput: ElementRef;
   @ViewChild("currentDayEarnedInput") currentDayEarnedInput: ElementRef;
@@ -33,6 +32,7 @@ export class ExpensesLogComponent implements OnInit {
               private timelineService: TimelineService) { }
 
   ngOnInit() {
+    let self = this;
     this.getBudgetDates();
     this.currentDay = new BudgetDate({
       expenses: null,
@@ -40,9 +40,14 @@ export class ExpensesLogComponent implements OnInit {
       moment: moment(),
       onServer: false
     });
-    this.timelineService.editBudgetDate(this.currentDay).subscribe({
-      next(updatedBudgetDate) {
-        console.log('updated budget date', updatedBudgetDate)
+    this.timelineService.onBudgetDateEdit().subscribe({
+      next(budgetDate: BudgetDate) {
+        console.log('budget date selected from timeline', budgetDate);
+        self.currentDay = budgetDate;
+      },
+      error(error) {
+        console.log('error', error);
+        console.log('display error');
       }
     });
   }

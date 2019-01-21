@@ -62,11 +62,14 @@ export class TimelineComponent implements OnInit {
       //console.log('dates of range', rangeDates);
       //console.log('all budget dates', this.budgetDates);
 
+      console.log('date 17th', this.budgetDates[10]);
       let timelineDates = this.budgetDates.filter(bd => rangeDates.find(d => d.isSame(bd.moment)));
+      console.log('date 17th after filter', this.budgetDates[10]);
       // dates in rangeDates and not in timelineDates become Budget dates
       let incompleteDates = rangeDates.filter(rd => !timelineDates.find(td => rd.isSame(td.moment)));
       let incompleteBudgetDates = this.datesToBudgetDates(incompleteDates, true);
       this.timelineDates = timelineDates.concat(incompleteBudgetDates);
+      console.log('timeline dates', this.timelineDates);
     }
   }
 

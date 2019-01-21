@@ -33,7 +33,8 @@
     </div>
 
     <div class="row input-row" *ngIf="!spentInputComplete || !earnedInputComplete">
-        <div>Editing = {{editingDate}}, {{currentDay | json}}</div>
+        <div>Editing = {{currentDay | json}}</div>
+        <div>moment = {{currentDay.moment}}</div>
         <div class="spending-input" *ngIf="!spentInputComplete">
           <label>How much did you spend today?</label>
           <input type="number"
