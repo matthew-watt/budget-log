@@ -7,15 +7,17 @@ import { Observable, Observer } from 'rxjs';
 })
 export class TimelineService {
 
-  editingBudgetDate: BudgetDate;
 
   constructor() { }
 
   editBudgetDate(budgetDate: BudgetDate): Observable<BudgetDate> {
+
+    
+
     const editSubscription = function(observer: Observer<BudgetDate>) {
       observer.next(budgetDate);
       observer.complete;
-    }
+    };
     const update = new Observable(editSubscription);
     return update;
   }

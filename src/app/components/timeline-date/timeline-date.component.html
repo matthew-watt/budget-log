@@ -10,6 +10,9 @@
     <div class="row">Earned ${{budgetDate.income}}</div>
     <div class="row">Spent ${{budgetDate.expenses}}</div>    
   </div>
+  <div *ngIf="!budgetDate.onServer" class="incomplete-date">
+    ?
+  </div>
 </div>
 
 <!-- not using -->

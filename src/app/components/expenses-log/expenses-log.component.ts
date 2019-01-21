@@ -40,6 +40,11 @@ export class ExpensesLogComponent implements OnInit {
       moment: moment(),
       onServer: false
     });
+    this.timelineService.editBudgetDate(this.currentDay).subscribe({
+      next(updatedBudgetDate) {
+        console.log('updated budget date', updatedBudgetDate)
+      }
+    });
   }
 
   ngAfterViewInit() {
@@ -129,7 +134,8 @@ export class ExpensesLogComponent implements OnInit {
         moment: moment(obj.Date),
         date: obj.Date,
         income: obj.Income,
-        expenses: obj.Expenses
+        expenses: obj.Expenses,
+        onServer: true
       });
       budgetDates.push(budgetDate);      
     }
