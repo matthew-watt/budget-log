@@ -118,11 +118,12 @@ export class ExpensesLogComponent implements OnInit {
         self.timelineBudgetDates = self.processDates(budgetDates);
       },
       error(error) {
-        console.log('error: could not fetch budgetDates');
-        console.log('fetching budget dates from test service');
+        //console.log('error: could not fetch budgetDates');
+        //console.log('fetching budget dates from test service');
         self.budgetTestService.getBudgetDates(startDate, finishDate).subscribe({
           next(budgetDates) {
             console.log(budgetDates);
+            console.log('utc offset', budgetDates[0].moment.utcOffset());
             self.timelineBudgetDates = budgetDates;
             //self.changeDetectorRef.detectChanges();
           },

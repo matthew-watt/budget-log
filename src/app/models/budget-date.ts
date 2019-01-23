@@ -10,7 +10,7 @@ export class BudgetDate {
         return this._date;
     }
     set date(date: string) {
-        this._date = date;
+        this._date = moment(date).toISOString();
     }
 
     private _moment: Moment;

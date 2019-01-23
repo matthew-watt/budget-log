@@ -16,7 +16,7 @@ export class BudgetTestService {
   getBudgetDates(startDate: string, endDate: string): Observable<BudgetDate[]> {
 
     let dates = this.datesOfRange(moment(startDate), moment(endDate));
-    console.log('dates:', dates);
+    //console.log('dates:', dates);
 
     let budgetDates: BudgetDate[] = [
       new BudgetDate({ moment: moment().subtract(1, 'd').startOf('d'), income: 100, expenses: 50, onServer: true }),

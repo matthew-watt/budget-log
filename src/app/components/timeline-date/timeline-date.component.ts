@@ -38,10 +38,11 @@ export class TimelineDateComponent implements OnInit {
   */
 
   onClick() {
-    console.log(this.budgetDate);
+    console.log('clicked budget date', this.budgetDate);
     this.editing = true;
+    console.log('moment utc offset', this.budgetDate.moment.utcOffset());
+    console.log('date utc offset', new Date(this.budgetDate.date).getTimezoneOffset());
     this.timelineService.editBudgetDate(this.budgetDate);
-    //this.editingChange.emit(this.editing);
   }
 
   onMouseEnter() {
@@ -56,7 +57,7 @@ export class TimelineDateComponent implements OnInit {
   @HostListener('window:resize', ['$event'])
   onResize(event) {
     if (this.hoverElement) {
-      console.log('height', this.hoverElement.nativeElement.offsetHeight);
+      //console.log('height', this.hoverElement.nativeElement.offsetHeight);
       this.offsetTopHover = -1 * (this.hoverElement.nativeElement.offsetHeight) + 20;
       this.offsetLeftHover = -1 * (this.hoverElement.nativeElement.offsetWidth - this.elementRef.nativeElement.offsetWidth) / 2 // date.width - hover.width / 2
       this.changeDetectorRef.detectChanges();
