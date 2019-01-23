@@ -11,6 +11,8 @@ export class BudgetDate {
     saved: number;
     format: string = 'MMMM Do YYYY';
     onServer: boolean = false; // apply on server
+    // server
+    date: string;
 
     public constructor(init?:Partial<BudgetDate>) {
         Object.assign(this, init);
@@ -33,6 +35,10 @@ export class BudgetDate {
             }
         );
         return obs;
+    }
+
+    setUTCDate(moment: Moment) {
+        this.date = moment.toISOString();
     }
 
 }

@@ -33,15 +33,6 @@ export class ExpensesLogComponent implements OnInit {
 
   ngOnInit() {
 
-    console.log('time stuff');
-    let localMoment = moment();
-    console.log('local time = ' + localMoment.format());
-    localMoment.utc();
-    console.log('time as utc = ' + localMoment.format());
-    localMoment.local();
-    console.log('local time = ' + localMoment.format());
-    console.log('----------------------------------------');
-
     let self = this;
     this.getBudgetDates();
     this.currentDay = new BudgetDate({
@@ -80,22 +71,26 @@ export class ExpensesLogComponent implements OnInit {
     }
 
     // completed budget logging for the day
-    if (this.spentInputComplete && this.earnedInputComplete) {
-      let self = this;
-      this.currentDay.moment.utc();
-
-      this.budgetService.postBudgetDay(this.currentDay)
-                        .subscribe({
-                          next(result) {
-                            self.currentDay.onServer = true;
-                          },
-                          error(error) {
-                            console.log(error);
-                          }
-                        });
+    if (this.spentInputComplete && this.earnedInputComplete) {            
+      this.saveBudgetInput();
     }
 
     this.helperText();
+  }
+
+  saveBudgetInput(): void {
+    let self = this;
+    // moment.toISOString coverts the date to a UTC (+0) datetime string, it is converted back to local timezone when fetch from server by moment()    
+    console.log('day being edited', self.currentDay);
+    this.budgetService.postBudgetDay(this.currentDay)        
+        .subscribe({
+          next(result) {
+            self.currentDay.onServer = true;
+          },
+          error(error) {
+            console.log(error);
+          }
+        });
   }
 
   helperText() {
@@ -142,9 +137,10 @@ export class ExpensesLogComponent implements OnInit {
 
       // dates from server are UTC
       const budgetDate = new BudgetDate({
-        moment: moment(obj.Date).local(),        
+        moment: moment(obj.Date),
+        date: moment(obj.Date).format('YYYY-MM-DDTHH:mm:ss'),
         income: obj.Income,
-        expenses: obj.Expenses,
+        expenses: obj.Expenses,        
         onServer: true
       });
       budgetDates.push(budgetDate);      
