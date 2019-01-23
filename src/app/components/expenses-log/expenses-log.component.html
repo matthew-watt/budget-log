@@ -48,8 +48,13 @@
           </tr>
 
           <tr>
-            <td>Perth Time (-5)</td>
+            <td>Somewhere else (-5)</td>
             <td>{{ currentDay.moment.clone().utcOffset(-5) }}</td>
+          </tr>
+
+          <tr>
+            <td>Somewhere else (-5)</td>
+            <td>{{ currentDay.moment.clone().utcOffset(-5).startOf('d').utc() }}</td>
           </tr>
           
         </table>
