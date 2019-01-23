@@ -38,7 +38,6 @@ export class TimelineDateComponent implements OnInit {
   */
 
   onClick() {
-    console.log(this.budgetDate);
     this.editing = true;
     this.timelineService.editBudgetDate(this.budgetDate);
     //this.editingChange.emit(this.editing);

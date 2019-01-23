@@ -54,22 +54,12 @@ export class TimelineComponent implements OnInit {
   updateTimeline() {
     this.updateTimelineLength(window.innerWidth);
     if (this.budgetDates.length > 0) {
-
       let rangeDates = this.datesOfRange(moment().subtract(this.timelineLength, 'd'), moment().add(1, 'd'));
-
-      //this.budgetDates = this.fillRangeGaps(this.budgetDates);
-
-      //console.log('dates of range', rangeDates);
-      //console.log('all budget dates', this.budgetDates);
-
-      console.log('date 17th', this.budgetDates[10]);
       let timelineDates = this.budgetDates.filter(bd => rangeDates.find(d => d.isSame(bd.moment)));
-      console.log('date 17th after filter', this.budgetDates[10]);
       // dates in rangeDates and not in timelineDates become Budget dates
       let incompleteDates = rangeDates.filter(rd => !timelineDates.find(td => rd.isSame(td.moment)));
       let incompleteBudgetDates = this.datesToBudgetDates(incompleteDates, true);
       this.timelineDates = timelineDates.concat(incompleteBudgetDates);
-      console.log('timeline dates', this.timelineDates);
     }
   }
 
@@ -88,6 +78,7 @@ export class TimelineComponent implements OnInit {
   datesToBudgetDates(dates: Moment[], onServer: boolean = false): BudgetDate[] {
     let budgetDates: BudgetDate[] = [];
     for (let date of dates) {
+      
       budgetDates.push(new BudgetDate({
         moment: date,
         onServer: false

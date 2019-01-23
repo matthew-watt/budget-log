@@ -32,6 +32,16 @@ export class ExpensesLogComponent implements OnInit {
               private timelineService: TimelineService) { }
 
   ngOnInit() {
+
+    console.log('time stuff');
+    let localMoment = moment();
+    console.log('local time = ' + localMoment.format());
+    localMoment.utc();
+    console.log('time as utc = ' + localMoment.format());
+    localMoment.local();
+    console.log('local time = ' + localMoment.format());
+    console.log('----------------------------------------');
+
     let self = this;
     this.getBudgetDates();
     this.currentDay = new BudgetDate({
@@ -42,12 +52,10 @@ export class ExpensesLogComponent implements OnInit {
     });
     this.timelineService.onBudgetDateEdit().subscribe({
       next(budgetDate: BudgetDate) {
-        console.log('budget date selected from timeline', budgetDate);
         self.currentDay = budgetDate;
       },
       error(error) {
         console.log('error', error);
-        console.log('display error');
       }
     });
   }
@@ -57,9 +65,6 @@ export class ExpensesLogComponent implements OnInit {
   }
 
   onKey(event: any) {
-
-    console.log('current day', this.currentDay);
-
     if (event.key === 'Enter') {
       // number = 22. 22 3 (include space)
       // non numeric
@@ -77,10 +82,11 @@ export class ExpensesLogComponent implements OnInit {
     // completed budget logging for the day
     if (this.spentInputComplete && this.earnedInputComplete) {
       let self = this;
+      this.currentDay.moment.utc();
+
       this.budgetService.postBudgetDay(this.currentDay)
                         .subscribe({
                           next(result) {
-                            console.log(result);
                             self.currentDay.onServer = true;
                           },
                           error(error) {
@@ -114,7 +120,6 @@ export class ExpensesLogComponent implements OnInit {
 
     this.budgetService.getBudgetDays(startDate, finishDate).subscribe({
       next(budgetDates) {
-        console.log(budgetDates);
         self.timelineBudgetDates = self.processDates(budgetDates);
       },
       error(error) {
@@ -122,7 +127,6 @@ export class ExpensesLogComponent implements OnInit {
         console.log('fetching budget dates from test service');
         self.budgetTestService.getBudgetDates(startDate, finishDate).subscribe({
           next(budgetDates) {
-            console.log(budgetDates);
             self.timelineBudgetDates = budgetDates;
             //self.changeDetectorRef.detectChanges();
           },
@@ -135,15 +139,18 @@ export class ExpensesLogComponent implements OnInit {
   processDates(objects) {
     let budgetDates: BudgetDate[] = [];
     for (let obj of objects) {
+
+      // dates from server are UTC
       const budgetDate = new BudgetDate({
-        moment: moment(obj.Date),
-        date: obj.Date,
+        moment: moment(obj.Date).local(),        
         income: obj.Income,
         expenses: obj.Expenses,
         onServer: true
       });
       budgetDates.push(budgetDate);      
     }
+
+    // current day is not UTC it is local
     budgetDates.push(this.currentDay);
     return budgetDates;
   }

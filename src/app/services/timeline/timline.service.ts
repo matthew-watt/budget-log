@@ -15,7 +15,6 @@ export class TimelineService {
 
   editBudgetDate(budgetDate: BudgetDate): void {    
     this.editingBudgetDate = budgetDate;
-    console.log('EDITING BUDGET DATE ..................', this.editingBudgetDate);
     this.editBudgetDateSubject.next(this.editingBudgetDate);
   }
 
