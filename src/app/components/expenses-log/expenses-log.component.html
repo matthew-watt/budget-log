@@ -13,28 +13,44 @@
         Average daily spending <span class="number-emphasised">$10.00</span>
       </div>      
     </div>
+    <div>
+      <table class="time-test">
+        <tr>
+          <td>Local</td>
+          <td>{{ currentDay.moment }}</td>
+          <td></td>
+        </tr>        
+        <tr>
+          <td>Local UTC Offset</td>
+          <td>{{ currentDay.moment.clone().utcOffset() }}</td>
+          <td>the offset is + 11 hours (660 minutes)</td>
+        </tr>
+        <tr>
+          <td>UTC (store as this)</td>
+          <td>{{ currentDay.moment.clone().utc() }}</td>
+          <td>apply UTC and the datetime is - 11 hours, the 11 hour offset is removed</td>
+        </tr>
+        <tr>
+          <td>Somewhere else (-10)</td>
+          <td>{{ currentDay.moment.clone().utcOffset(-10) }}</td>
+          <td>if this page is loaded in SOMEWHERE timezone (-10) then moment() would be this time, 21 hours behind melbourne</td>
+        </tr>
+        <tr>
+          <td>Somewhere else (-10) as UTC</td>
+          <td>{{ currentDay.moment.clone().utcOffset(-10).utc() }}</td>
+          <td>when it is stored as UTC in the -10 timezone it becomes this,
+            same day, then, for eg. user loads it in timezone ahead it would offset all dates to 
+            the next day if the offset pushes the day past midnight. There are instances when the day isn't affected,
+            eg. when the offset doesn't push the day ahead or behind. error proof as long as saved as utc+0.
+          </td>
+        </tr>          
+      </table>
+    </div>
   </div>
   <div class="container">
 
-    <div class="completed-input" *ngIf="spentInputComplete && earnedInputComplete">
-      <div class="today-summary">
-        <div class="today">
-          <div class="today-label">Earned</div>
-          <div class="today-amount">${{currentDay.income}}</div>
-        </div>
-        <div class="today">
-          <div class="today-label">Spent</div>
-          <div class="today-amount">${{currentDay.expenses}}</div>
-        </div>        
-      </div>
-      <div class="summary-note">
-        You saved ${{currentDay.saved}} Remember to log your spending tomorrow
-      </div>
-    </div>
-
     <div class="row input-row" *ngIf="!spentInputComplete || !earnedInputComplete">
-        <div>Editing = {{currentDay | json}}</div>
-        <div>moment = {{currentDay.moment}}</div>
+        <div></div>
         <div class="spending-input" *ngIf="!spentInputComplete">
           <label>How much did you spend today?</label>
           <input type="number"
@@ -51,6 +67,26 @@
         </div>
         <div class="helper-text" *ngIf="inputHelperTextVisible">Press enter to continue</div>
     </div>
+
+    <div class="completed-input" *ngIf="spentInputComplete && earnedInputComplete">
+      <div class="today-summary">
+        <div class="today">
+          <div class="today-label">Earned</div>
+          <div class="today-amount">${{currentDay.income}}</div>
+        </div>
+        <div class="today">
+          <div class="today-label">Spent</div>
+          <div class="today-amount">${{currentDay.expenses}}</div>
+        </div>        
+      </div>
+      <div class="summary-note">
+        You saved ${{currentDay.saved}} Remember to log your spending tomorrow
+      </div>
+      <div class="edit">
+        <div class="button">Edit</div>
+      </div>
+    </div>
+    
   </div>
 </div>
 

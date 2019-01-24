@@ -112,3 +112,11 @@ input {
 .completed-input {
     margin-bottom: 80px;
 }
+
+/* testing only */
+table.time-test {
+    td:first-child {
+        font-weight: bold;
+        padding-right: 20px;
+    }
+}

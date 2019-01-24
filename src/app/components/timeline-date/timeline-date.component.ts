@@ -38,7 +38,6 @@ export class TimelineDateComponent implements OnInit {
   */
 
   onClick() {
-    console.log('clicked budget date', this.budgetDate);
     this.editing = true;
     console.log('moment utc offset', this.budgetDate.moment.utcOffset());
     console.log('date utc offset', new Date(this.budgetDate.date).getTimezoneOffset());

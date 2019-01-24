@@ -32,6 +32,7 @@ export class BudgetService {
       );
   }
 
+  // server expects date property, use BudgetDate.UTCDate get() set()
   postBudgetDay(budgetDay: BudgetDate) {
     return this.http.post<BudgetDate>(this.apiRoot + '/api/budgetdays', budgetDay, this.httpOptions)
       .pipe(

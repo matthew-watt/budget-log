@@ -32,6 +32,7 @@ export class ExpensesLogComponent implements OnInit {
               private timelineService: TimelineService) { }
 
   ngOnInit() {
+
     let self = this;
     this.getBudgetDates();
     this.currentDay = new BudgetDate({
@@ -41,13 +42,15 @@ export class ExpensesLogComponent implements OnInit {
       onServer: false
     });
     this.timelineService.onBudgetDateEdit().subscribe({
+
       next(budgetDate: BudgetDate) {
-        console.log('budget date selected from timeline', budgetDate);
+        self.spentInputComplete = false;
+        self.earnedInputComplete = false;
+        self.inputHelperTextVisible = true;
         self.currentDay = budgetDate;
       },
       error(error) {
         console.log('error', error);
-        console.log('display error');
       }
     });
   }
@@ -57,9 +60,6 @@ export class ExpensesLogComponent implements OnInit {
   }
 
   onKey(event: any) {
-
-    console.log('current day', this.currentDay);
-
     if (event.key === 'Enter') {
       // number = 22. 22 3 (include space)
       // non numeric
@@ -75,21 +75,26 @@ export class ExpensesLogComponent implements OnInit {
     }
 
     // completed budget logging for the day
-    if (this.spentInputComplete && this.earnedInputComplete) {
-      let self = this;
-      this.budgetService.postBudgetDay(this.currentDay)
-                        .subscribe({
-                          next(result) {
-                            console.log(result);
-                            self.currentDay.onServer = true;
-                          },
-                          error(error) {
-                            console.log(error);
-                          }
-                        });
+    if (this.spentInputComplete && this.earnedInputComplete) {            
+      this.saveBudgetInput();
     }
 
     this.helperText();
+  }
+
+  saveBudgetInput(): void {
+    let self = this;
+    // moment.toISOString coverts the date to a UTC (+0) datetime string, it is converted back to local timezone when fetch from server by moment()    
+    console.log('day being edited', self.currentDay);
+    this.budgetService.postBudgetDay(this.currentDay)        
+        .subscribe({
+          next(result) {
+            self.currentDay.onServer = true;
+          },
+          error(error) {
+            console.log(error);
+          }
+        });
   }
 
   helperText() {
@@ -114,7 +119,6 @@ export class ExpensesLogComponent implements OnInit {
 
     this.budgetService.getBudgetDays(startDate, finishDate).subscribe({
       next(budgetDates) {
-        console.log(budgetDates);
         self.timelineBudgetDates = self.processDates(budgetDates);
       },
       error(error) {
@@ -122,8 +126,6 @@ export class ExpensesLogComponent implements OnInit {
         //console.log('fetching budget dates from test service');
         self.budgetTestService.getBudgetDates(startDate, finishDate).subscribe({
           next(budgetDates) {
-            console.log(budgetDates);
-            console.log('utc offset', budgetDates[0].moment.utcOffset());
             self.timelineBudgetDates = budgetDates;
             //self.changeDetectorRef.detectChanges();
           },
@@ -136,15 +138,19 @@ export class ExpensesLogComponent implements OnInit {
   processDates(objects) {
     let budgetDates: BudgetDate[] = [];
     for (let obj of objects) {
+
+      // dates from server are UTC
       const budgetDate = new BudgetDate({
         moment: moment(obj.Date),
-        date: obj.Date,
+        date: moment(obj.Date).format('YYYY-MM-DDTHH:mm:ss'),
         income: obj.Income,
-        expenses: obj.Expenses,
+        expenses: obj.Expenses,        
         onServer: true
       });
       budgetDates.push(budgetDate);      
     }
+
+    // current day is not UTC it is local
     budgetDates.push(this.currentDay);
     return budgetDates;
   }
