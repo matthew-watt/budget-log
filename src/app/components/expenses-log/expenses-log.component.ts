@@ -42,7 +42,11 @@ export class ExpensesLogComponent implements OnInit {
       onServer: false
     });
     this.timelineService.onBudgetDateEdit().subscribe({
+
       next(budgetDate: BudgetDate) {
+        self.spentInputComplete = false;
+        self.earnedInputComplete = false;
+        self.inputHelperTextVisible = true;
         self.currentDay = budgetDate;
       },
       error(error) {

@@ -49,22 +49,6 @@
   </div>
   <div class="container">
 
-    <div class="completed-input" *ngIf="spentInputComplete && earnedInputComplete">
-      <div class="today-summary">
-        <div class="today">
-          <div class="today-label">Earned</div>
-          <div class="today-amount">${{currentDay.income}}</div>
-        </div>
-        <div class="today">
-          <div class="today-label">Spent</div>
-          <div class="today-amount">${{currentDay.expenses}}</div>
-        </div>        
-      </div>
-      <div class="summary-note">
-        You saved ${{currentDay.saved}} Remember to log your spending tomorrow
-      </div>
-    </div>
-
     <div class="row input-row" *ngIf="!spentInputComplete || !earnedInputComplete">
         <div></div>
         <div class="spending-input" *ngIf="!spentInputComplete">
@@ -83,6 +67,26 @@
         </div>
         <div class="helper-text" *ngIf="inputHelperTextVisible">Press enter to continue</div>
     </div>
+
+    <div class="completed-input" *ngIf="spentInputComplete && earnedInputComplete">
+      <div class="today-summary">
+        <div class="today">
+          <div class="today-label">Earned</div>
+          <div class="today-amount">${{currentDay.income}}</div>
+        </div>
+        <div class="today">
+          <div class="today-label">Spent</div>
+          <div class="today-amount">${{currentDay.expenses}}</div>
+        </div>        
+      </div>
+      <div class="summary-note">
+        You saved ${{currentDay.saved}} Remember to log your spending tomorrow
+      </div>
+      <div class="edit">
+        <div class="button">Edit</div>
+      </div>
+    </div>
+    
   </div>
 </div>
 

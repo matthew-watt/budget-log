@@ -36,6 +36,9 @@ label {
     border-radius: 3px;
     font-size: 20px;
 }
+.button:hover {
+    cursor: pointer;
+}
 
 .number-emphasised {
     color: #333;
