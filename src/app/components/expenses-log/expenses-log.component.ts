@@ -22,6 +22,9 @@ export class ExpensesLogComponent implements OnInit {
   now: Moment;
   timelineBudgetDates: BudgetDate[];
 
+  editMode: boolean = false;
+  spendingInputActive: boolean = false;
+  earningInputActive: boolean = false;
 
   @ViewChild("currentDaySpentInput") currentDaySpentInput: ElementRef;
   @ViewChild("currentDayEarnedInput") currentDayEarnedInput: ElementRef;
@@ -61,8 +64,11 @@ export class ExpensesLogComponent implements OnInit {
 
   onKey(event: any) {
     if (event.key === 'Enter') {
-      // number = 22. 22 3 (include space)
-      // non numeric
+      
+      if (this.editMode) {
+
+      }
+
       if (this.currentDay.expenses) {
         this.spentInputComplete = true;
         this.changeDetectorRef.detectChanges();
@@ -80,6 +86,10 @@ export class ExpensesLogComponent implements OnInit {
     }
 
     this.helperText();
+  }
+
+  editInput(): void {
+
   }
 
   saveBudgetInput(): void {
@@ -122,8 +132,8 @@ export class ExpensesLogComponent implements OnInit {
         self.timelineBudgetDates = self.processDates(budgetDates);
       },
       error(error) {
-        //console.log('error: could not fetch budgetDates');
-        //console.log('fetching budget dates from test service');
+        console.log('error: could not fetch budgetDates');
+        console.log('fetching budget dates from test service');
         self.budgetTestService.getBudgetDates(startDate, finishDate).subscribe({
           next(budgetDates) {
             self.timelineBudgetDates = budgetDates;
