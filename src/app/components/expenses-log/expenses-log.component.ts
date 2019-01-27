@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@an
 import { CurrentDay } from 'src/app/models/current-day';
 import { BudgetService } from 'src/app/services/budget/budget.service';
 import { BudgetTestService } from 'src/app/services/budget-test/budget-test.service';
-import { TimelineService } from 'src/app/services/timeline/timline.service';
+import { TimelineService } from 'src/app/services/timeline/timeline.service';
 import { BudgetDate } from 'src/app/models/budget-date';
 import * as moment from 'moment';
 import { Moment } from 'moment';
@@ -22,9 +22,13 @@ export class ExpensesLogComponent implements OnInit {
   now: Moment;
   timelineBudgetDates: BudgetDate[];
 
+  timezonesVisible: boolean = false;
   editMode: boolean = false;
-  spendingInputActive: boolean = false;
-  earningInputActive: boolean = false;
+  editBudgetDate: BudgetDate;
+
+  spentInputLastValue: number = null;
+
+  inputStep: number = 1;
 
   @ViewChild("currentDaySpentInput") currentDaySpentInput: ElementRef;
   @ViewChild("currentDayEarnedInput") currentDayEarnedInput: ElementRef;
@@ -51,6 +55,9 @@ export class ExpensesLogComponent implements OnInit {
         self.earnedInputComplete = false;
         self.inputHelperTextVisible = true;
         self.currentDay = budgetDate;
+        self.editMode = true;
+        console.log('budget date edit', budgetDate);
+        self.editBudgetDate = Object.assign(budgetDate, {});
       },
       error(error) {
         console.log('error', error);
@@ -66,30 +73,52 @@ export class ExpensesLogComponent implements OnInit {
     if (event.key === 'Enter') {
       
       if (this.editMode) {
-
+        this.editInput();
       }
-
-      if (this.currentDay.expenses) {
-        this.spentInputComplete = true;
-        this.changeDetectorRef.detectChanges();
-        this.currentDayEarnedInput.nativeElement.focus();
-      }
-      if (this.currentDay.income) {
-        this.earnedInputComplete = true;
-        this.currentDay.saved = this.currentDay.income - this.currentDay.expenses;
+      else {
+        if (this.currentDay.expenses) {
+          this.spentInputComplete = true;
+          this.changeDetectorRef.detectChanges();
+          this.currentDayEarnedInput.nativeElement.focus();
+        }
+        if (this.currentDay.income) {
+          this.earnedInputComplete = true;
+          this.currentDay.saved = this.currentDay.income - this.currentDay.expenses;
+        }
+  
+        // completed budget logging for the day
+        if (this.spentInputComplete && this.earnedInputComplete) {            
+          this.saveBudgetInput();
+        }
       }
     }
-
-    // completed budget logging for the day
-    if (this.spentInputComplete && this.earnedInputComplete) {            
-      this.saveBudgetInput();
-    }
-
+    this.spentInputLastValue = !null ? Number(this.currentDaySpentInput) : 0;
     this.helperText();
   }
 
   editInput(): void {
+    console.log('last spend input value = ', this.spentInputLastValue);
 
+
+    if (this.inputStep == 1 && this.currentDay.expenses !== null) {
+      this.spentInputComplete = true;
+      this.changeDetectorRef.detectChanges();
+      this.currentDayEarnedInput.nativeElement.focus();
+    }
+    if (this.inputStep == 2 && this.currentDay.income !== null) {
+      this.earnedInputComplete = true;
+      this.currentDay.saved = this.currentDay.income - this.currentDay.expenses;
+      this.editMode = false;
+    }
+
+    this.inputStep++;
+
+    // completed budget logging for the day
+    if (this.spentInputComplete && this.earnedInputComplete) {            
+      this.saveBudgetInput();
+      this.inputStep = 1;
+    }
+    
   }
 
   saveBudgetInput(): void {

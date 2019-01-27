@@ -92,6 +92,12 @@ input {
     }
 }
 
+@media only screen and (max-width: 700px) {
+    .budget-summary {
+        display: none;
+    }
+}
+
 .spending-input, .earnings-input {
     display: flex;
     flex-direction: column;

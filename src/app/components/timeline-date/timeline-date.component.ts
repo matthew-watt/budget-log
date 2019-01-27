@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ElementRef, ViewChild, ChangeDetectorRef, HostListener, EventEmitter, Output  } from '@angular/core';
 import * as moment from 'moment';
 import { BudgetDate } from 'src/app/models/budget-date';
-import { TimelineService } from 'src/app/services/timeline/timline.service';
+import { TimelineService } from 'src/app/services/timeline/timeline.service';
 
 @Component({
   selector: 'app-timeline-date',
@@ -39,9 +39,16 @@ export class TimelineDateComponent implements OnInit {
 
   onClick() {
     this.editing = true;
-    console.log('moment utc offset', this.budgetDate.moment.utcOffset());
-    console.log('date utc offset', new Date(this.budgetDate.date).getTimezoneOffset());
     this.timelineService.editBudgetDate(this.budgetDate);
+    //this.timelineService.editBudgetDate(Object.assign(this.budgetDate, {}));
+    /*
+    this.timelineService.editBudgetDate(new BudgetDate({
+      expenses: this.budgetDate.expenses,
+      income: this.budgetDate.income,
+      date: this.budgetDate.date,
+      isToday: this.budgetDate.isToday
+    }));
+    */
   }
 
   onMouseEnter() {

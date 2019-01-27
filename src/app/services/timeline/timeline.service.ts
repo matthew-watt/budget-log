@@ -13,9 +13,13 @@ export class TimelineService {
 
   constructor() { }
 
-  editBudgetDate(budgetDate: BudgetDate): void {    
+  editBudgetDate(budgetDate: BudgetDate): void {
     this.editingBudgetDate = budgetDate;
     this.editBudgetDateSubject.next(this.editingBudgetDate);
+  }
+
+  getEditBudgetDate() {
+    return this.editingBudgetDate;
   }
 
   onBudgetDateEdit(): Observable<BudgetDate> {

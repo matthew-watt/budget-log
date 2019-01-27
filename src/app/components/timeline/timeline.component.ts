@@ -60,9 +60,9 @@ export class TimelineComponent implements OnInit {
       let incompleteDates = rangeDates.filter(rd => !timelineDates.find(td => rd.isSame(td.moment)));
       let incompleteBudgetDates = this.datesToBudgetDates(incompleteDates, true);
       this.timelineDates = timelineDates.concat(incompleteBudgetDates);
-      this.timelineDates.sort(function(a, b) { 
+      this.timelineDates.sort(function(a, b) {
         return a.moment.valueOf() - b.moment.valueOf();
-      })
+      });
       console.log('timeline dates', this.timelineDates);
     }
   }
