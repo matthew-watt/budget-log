@@ -51,13 +51,18 @@ export class ExpensesLogComponent implements OnInit {
     this.timelineService.onBudgetDateEdit().subscribe({
 
       next(budgetDate: BudgetDate) {
+        if (self.editMode) {
+          self.currentDay.expenses = self.editBudgetDate.expenses;
+          self.currentDay.income = self.editBudgetDate.income;
+        }
+
         self.spentInputComplete = false;
         self.earnedInputComplete = false;
         self.inputHelperTextVisible = true;
         self.currentDay = budgetDate;
         self.editMode = true;
-        console.log('budget date edit', budgetDate);
-        self.editBudgetDate = Object.assign(budgetDate, {});
+        self.inputStep = 1;        
+        self.editBudgetDate = Object.assign({}, budgetDate);
       },
       error(error) {
         console.log('error', error);
@@ -71,60 +76,34 @@ export class ExpensesLogComponent implements OnInit {
 
   onKey(event: any) {
     if (event.key === 'Enter') {
-      
-      if (this.editMode) {
-        this.editInput();
-      }
-      else {
-        if (this.currentDay.expenses) {
-          this.spentInputComplete = true;
-          this.changeDetectorRef.detectChanges();
-          this.currentDayEarnedInput.nativeElement.focus();
-        }
-        if (this.currentDay.income) {
-          this.earnedInputComplete = true;
-          this.currentDay.saved = this.currentDay.income - this.currentDay.expenses;
-        }
-  
-        // completed budget logging for the day
-        if (this.spentInputComplete && this.earnedInputComplete) {            
-          this.saveBudgetInput();
-        }
-      }
+      this.enterInput();
+      console.log('edit budget date', this.editBudgetDate);
     }
-    this.spentInputLastValue = !null ? Number(this.currentDaySpentInput) : 0;
     this.helperText();
   }
 
-  editInput(): void {
-    console.log('last spend input value = ', this.spentInputLastValue);
-
-
-    if (this.inputStep == 1 && this.currentDay.expenses !== null) {
+  enterInput() {
+    if (this.inputStep == 1 && this.currentDay.expenses) {
       this.spentInputComplete = true;
       this.changeDetectorRef.detectChanges();
       this.currentDayEarnedInput.nativeElement.focus();
+      this.inputStep++;
     }
-    if (this.inputStep == 2 && this.currentDay.income !== null) {
+    else if (this.inputStep == 2 && this.currentDay.income) {
       this.earnedInputComplete = true;
-      this.currentDay.saved = this.currentDay.income - this.currentDay.expenses;
-      this.editMode = false;
+      this.currentDay.saved = this.currentDay.income - this.currentDay.expenses;      
     }
-
-    this.inputStep++;
-
-    // completed budget logging for the day
-    if (this.spentInputComplete && this.earnedInputComplete) {            
+    else if (this.spentInputComplete && this.earnedInputComplete) {
+      console.log('saving inputs');
       this.saveBudgetInput();
+      this.editMode = false;
       this.inputStep = 1;
     }
-    
+    console.log('@ step  = ' + this.inputStep);
   }
 
   saveBudgetInput(): void {
-    let self = this;
-    // moment.toISOString coverts the date to a UTC (+0) datetime string, it is converted back to local timezone when fetch from server by moment()    
-    console.log('day being edited', self.currentDay);
+    let self = this;    
     this.budgetService.postBudgetDay(this.currentDay)        
         .subscribe({
           next(result) {
@@ -137,11 +116,11 @@ export class ExpensesLogComponent implements OnInit {
   }
 
   helperText() {
-    this.inputHelperTextVisible = false;
-    if (this.currentDay.expenses && !this.spentInputComplete) {
+      
+    if (this.currentDay.expenses && this.inputStep == 1) {
       this.inputHelperTextVisible = true;
     }
-    else if (this.currentDay.income && this.spentInputComplete && !this.earnedInputComplete) {
+    else if (this.currentDay.income && this.inputStep == 2) {
       this.inputHelperTextVisible = true;
     }
     else {

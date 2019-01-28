@@ -19,7 +19,8 @@
     <div class="row input-row" *ngIf="!spentInputComplete || !earnedInputComplete">
         <div></div>
         <div class="spending-input" *ngIf="!spentInputComplete">
-          <label>How much did you spend today?</label>
+          <label *ngIf="editMode">How much did you spend on the {{currentDay.moment.format('Do MMMM YYYY')}}?</label>
+          <label *ngIf="!editMode">How much did you spend today?</label>
           <input type="number"
                  [(ngModel)]="currentDay.expenses"
                  (keyup)="onKey($event)"
