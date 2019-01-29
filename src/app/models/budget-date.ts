@@ -5,7 +5,7 @@ import { ObserveOnOperator } from 'rxjs/internal/operators/observeOn';
 
 export class BudgetDate {
 
-    moment: Moment;
+    //moment: Moment;
     expenses: number;
     income: number;
     saved: number;
@@ -13,6 +13,16 @@ export class BudgetDate {
     onServer: boolean = false; // apply on server
     // server
     date: string;
+
+    private _moment: Moment;
+    set moment(moment: Moment) {
+        this._moment = moment;
+        this.date = moment.toISOString();
+    }
+
+    get moment(): Moment {
+        return this._moment;
+    }
 
     public constructor(init?:Partial<BudgetDate>) {
         Object.assign(this, init);

@@ -36,7 +36,14 @@ export class BudgetService {
   postBudgetDay(budgetDay: BudgetDate) {
     return this.http.post<BudgetDate>(this.apiRoot + '/api/budgetdays', budgetDay, this.httpOptions)
       .pipe(
-        catchError(this.handleError('addHero', []))
+        catchError(this.handleError('postBudgetDay', []))
+      );
+  }
+
+  putBudgetDay(budgetDate: BudgetDate) {
+    return this.http.put<BudgetDate>(this.apiRoot + '/api/budgetdays', budgetDate, this.httpOptions)
+      .pipe(
+        catchError(this.handleError('putBudgetDay', []))
       );
   }
 

@@ -51,18 +51,16 @@ export class ExpensesLogComponent implements OnInit {
     this.timelineService.onBudgetDateEdit().subscribe({
 
       next(budgetDate: BudgetDate) {
-        if (self.editMode) {
-          self.currentDay.expenses = self.editBudgetDate.expenses;
-          self.currentDay.income = self.editBudgetDate.income;
-        }
+        console.log('@ step  = ' + this.inputStep);
 
         self.spentInputComplete = false;
         self.earnedInputComplete = false;
         self.inputHelperTextVisible = true;
         self.currentDay = budgetDate;
         self.editMode = true;
-        self.inputStep = 1;        
+        self.inputStep = 1;
         self.editBudgetDate = Object.assign({}, budgetDate);
+        self.helperText();
       },
       error(error) {
         console.log('error', error);
@@ -91,11 +89,15 @@ export class ExpensesLogComponent implements OnInit {
     }
     else if (this.inputStep == 2 && this.currentDay.income) {
       this.earnedInputComplete = true;
-      this.currentDay.saved = this.currentDay.income - this.currentDay.expenses;      
-    }
-    else if (this.spentInputComplete && this.earnedInputComplete) {
-      console.log('saving inputs');
-      this.saveBudgetInput();
+      this.currentDay.saved = this.currentDay.income - this.currentDay.expenses;
+
+      console.log('edit mode = ' + this.editMode);
+      if (this.editMode) {
+        this.updateBudgetInput();
+      }
+      else {
+        this.saveBudgetInput();
+      }
       this.editMode = false;
       this.inputStep = 1;
     }
@@ -103,7 +105,7 @@ export class ExpensesLogComponent implements OnInit {
   }
 
   saveBudgetInput(): void {
-    let self = this;    
+    let self = this;
     this.budgetService.postBudgetDay(this.currentDay)        
         .subscribe({
           next(result) {
@@ -113,6 +115,19 @@ export class ExpensesLogComponent implements OnInit {
             console.log(error);
           }
         });
+  }
+
+  updateBudgetInput(): void {
+    let self = this;
+    this.budgetService.putBudgetDay(this.currentDay)
+      .subscribe({
+        next(result) {
+          self.currentDay.onServer = true;
+        },
+        error(error) {
+          console.log(error);
+        }
+      });
   }
 
   helperText() {
