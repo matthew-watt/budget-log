@@ -1,11 +1,13 @@
 import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
-import { CurrentDay } from 'src/app/models/current-day';
 import { BudgetService } from 'src/app/services/budget/budget.service';
 import { BudgetTestService } from 'src/app/services/budget-test/budget-test.service';
 import { TimelineService } from 'src/app/services/timeline/timeline.service';
 import { BudgetDate } from 'src/app/models/budget-date';
 import * as moment from 'moment';
 import { Moment } from 'moment';
+
+import { mergeMap, tap, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-expenses-log',
@@ -21,14 +23,14 @@ export class ExpensesLogComponent implements OnInit {
   earnedInputComplete: boolean = false;
   now: Moment;
   timelineBudgetDates: BudgetDate[];
-
   timezonesVisible: boolean = false;
   editMode: boolean = false;
   editBudgetDate: BudgetDate;
-
   spentInputLastValue: number = null;
-
   inputStep: number = 1;
+  startDate: string;
+  finishDate: string;
+  todayComplete: boolean;
 
   @ViewChild("currentDaySpentInput") currentDaySpentInput: ElementRef;
   @ViewChild("currentDayEarnedInput") currentDayEarnedInput: ElementRef;
@@ -39,33 +41,75 @@ export class ExpensesLogComponent implements OnInit {
               private timelineService: TimelineService) { }
 
   ngOnInit() {
-
     let self = this;
-    this.getBudgetDates();
+    this.startDate = moment().subtract('days', 4).format('YYYY-MM-DD').toString();
+    this.finishDate = moment().add('days', 4).format('YYYY-MM-DD').toString();
+    
+    this.getBudgetDates()    
+        .subscribe({
+          next(budgetDates) {
+            console.log('fetched budget dates from server.');
+            console.log('fetched dates from server', budgetDates);
+            self.timelineBudgetDates = self.processDates(budgetDates);
+            console.log('timeline dates', self.timelineBudgetDates);            
+          },
+          error(error) {
+            // shouldn't nest rxjs like this, defeats the purpose
+            self.budgetTestService.getBudgetDates(self.startDate, self.finishDate)
+            
+            .subscribe({
+              next(budgetDates) {
+                console.log('fetched budget dates from local test service.');
+                self.timelineBudgetDates = budgetDates;                   
+              },
+              error(error) {}
+            });
+          }
+        });
+
+        // if new day, could be past, requires date
+        // existing, requires id only
+    
+
     this.currentDay = new BudgetDate({
-      expenses: null,
-      income: null,
+      spent: null,
+      earned: null,
       moment: moment(),
       onServer: false
     });
+    console.log('current day', this.currentDay.moment.toString());
+    //this.debugDay();
+
     this.timelineService.onBudgetDateEdit().subscribe({
 
       next(budgetDate: BudgetDate) {
-        console.log('@ step  = ' + this.inputStep);
+        if (budgetDate.id) {
+          self.editMode = true;
+        }
+        else {
+          self.editMode = false;
+        }
 
-        self.spentInputComplete = false;
-        self.earnedInputComplete = false;
         self.inputHelperTextVisible = true;
         self.currentDay = budgetDate;
-        self.editMode = true;
+        self.todayComplete = false;        
         self.inputStep = 1;
         self.editBudgetDate = Object.assign({}, budgetDate);
         self.helperText();
+
+        console.log('EDIT MODE = ' + self.editMode);
       },
       error(error) {
         console.log('error', error);
       }
     });
+  }
+
+  editingToday() {
+    if (this.currentDay.moment.isSame(moment(), 'd')) {
+      //console.log('edit day is today...');
+      return true;
+    }
   }
 
   ngAfterViewInit() {
@@ -74,34 +118,36 @@ export class ExpensesLogComponent implements OnInit {
 
   onKey(event: any) {
     if (event.key === 'Enter') {
-      this.enterInput();
-      console.log('edit budget date', this.editBudgetDate);
+      this.enterInput();      
     }
     this.helperText();
   }
 
   enterInput() {
-    if (this.inputStep == 1 && this.currentDay.expenses) {
-      this.spentInputComplete = true;
+    
+    if (this.inputStep == 1) {
       this.changeDetectorRef.detectChanges();
-      this.currentDayEarnedInput.nativeElement.focus();
+      //this.currentDayEarnedInput.nativeElement.focus();
       this.inputStep++;
     }
-    else if (this.inputStep == 2 && this.currentDay.income) {
-      this.earnedInputComplete = true;
-      this.currentDay.saved = this.currentDay.income - this.currentDay.expenses;
+    else if (this.inputStep == 2 && this.currentDaySpentInput !== null) {
+      this.currentDay.saved = this.currentDay.earned - this.currentDay.spent;
+      
+      if (this.currentDayEarnedInput !== null) {
+        if (this.editMode) {          
+          this.updateBudgetInput();
+        }
+        else {
+          this.saveBudgetInput();
+        }
+        this.todayComplete = true;        
+        this.editMode = false;
+      }
 
-      console.log('edit mode = ' + this.editMode);
-      if (this.editMode) {
-        this.updateBudgetInput();
-      }
-      else {
-        this.saveBudgetInput();
-      }
-      this.editMode = false;
-      this.inputStep = 1;
-    }
-    console.log('@ step  = ' + this.inputStep);
+    }    
+    
+    console.log('@ step = ', this.inputStep);
+    console.log('input step @ ', this.inputStep);
   }
 
   saveBudgetInput(): void {
@@ -132,10 +178,10 @@ export class ExpensesLogComponent implements OnInit {
 
   helperText() {
       
-    if (this.currentDay.expenses && this.inputStep == 1) {
+    if (this.currentDay.spent && this.inputStep == 1) {
       this.inputHelperTextVisible = true;
     }
-    else if (this.currentDay.income && this.inputStep == 2) {
+    else if (this.currentDay.earned && this.inputStep == 2) {
       this.inputHelperTextVisible = true;
     }
     else {
@@ -144,28 +190,10 @@ export class ExpensesLogComponent implements OnInit {
   }
 
   getBudgetDates() {
-    const startDate = moment().subtract('days', 4).format('YYYY-MM-DD').toString();
-    const finishDate = moment().add('days', 4).format('YYYY-MM-DD').toString();
-
-    let self = this;
     this.timelineBudgetDates = [];
-
-    this.budgetService.getBudgetDays(startDate, finishDate).subscribe({
-      next(budgetDates) {
-        self.timelineBudgetDates = self.processDates(budgetDates);
-      },
-      error(error) {
-        console.log('error: could not fetch budgetDates');
-        console.log('fetching budget dates from test service');
-        self.budgetTestService.getBudgetDates(startDate, finishDate).subscribe({
-          next(budgetDates) {
-            self.timelineBudgetDates = budgetDates;
-            //self.changeDetectorRef.detectChanges();
-          },
-          error(error) {}
-        });
-      }
-    });
+    return this.budgetService.getBudgetDays(this.startDate, this.finishDate).pipe(
+      //mergeMap(budgetDates => budgetDates)
+    );
   }
 
   processDates(objects) {
@@ -174,18 +202,28 @@ export class ExpensesLogComponent implements OnInit {
 
       // dates from server are UTC
       const budgetDate = new BudgetDate({
-        moment: moment(obj.Date),
-        date: moment(obj.Date).format('YYYY-MM-DDTHH:mm:ss'),
-        income: obj.Income,
-        expenses: obj.Expenses,        
+        id: obj.id,
+        moment: moment(obj.date),
+        date: moment(obj.date).format('YYYY-MM-DDTHH:mm:ss'),
+        earned: obj.earned,
+        spent: obj.spent,        
         onServer: true
       });
       budgetDates.push(budgetDate);      
     }
 
     // current day is not UTC it is local
-    budgetDates.push(this.currentDay);
+    //budgetDates.push(this.currentDay);
     return budgetDates;
+  }
+
+  debugDay() {
+    console.log('----------');
+    console.log('timezone: ', this.currentDay.moment.utcOffset());
+    console.log('date: ', this.currentDay.moment.toString());
+    console.log('date ISO: ', this.currentDay.moment.toISOString());
+    console.log('date: ', this.currentDay.moment.format('YYYY-MM-DDTHH:mm:ss'));
+    console.log('----------');
   }
 
 }

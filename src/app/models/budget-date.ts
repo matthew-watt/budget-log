@@ -1,23 +1,32 @@
 import * as moment from 'moment';
 import { Moment } from 'moment';
 import { Observable, observable } from 'rxjs';
-import { ObserveOnOperator } from 'rxjs/internal/operators/observeOn';
 
 export class BudgetDate {
 
     //moment: Moment;
-    expenses: number;
-    income: number;
+    id: number;
+    spent: number;
+    earned: number;
     saved: number;
-    format: string = 'MMMM Do YYYY';
+    todayFormat: string = 'MMMM Do';
     onServer: boolean = false; // apply on server
     // server
     date: string;
+    dateFormatted: string;
 
     private _moment: Moment;
-    set moment(moment: Moment) {
-        this._moment = moment;
-        this.date = moment.toISOString();
+    set moment(m: Moment) {
+        console.log('moment = ', m.toString());
+        console.log('moment ISO = ', m.toISOString());
+        console.log('-------------');
+        this._moment = m.clone();
+        this._moment.startOf('d');
+        let utcOffset = moment().utcOffset();
+        //this.date = m.add(utcOffset, 'minutes').toISOString();
+        this.date = m.format('YYYY-MM-DDT00:00:00');
+        this.dateFormatted = m.format(this.todayFormat);
+        //console.log('date = ' + this.date + ', moment = ' + this.moment.toISOString());
     }
 
     get moment(): Moment {

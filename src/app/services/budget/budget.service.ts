@@ -4,6 +4,7 @@ import { BudgetDate } from 'src/app/models/budget-date';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Moment } from 'moment';
+import { Budget } from 'src/app/models/budget';
 
 @Injectable({
   providedIn: 'root'
@@ -24,9 +25,10 @@ export class BudgetService {
     params.set('start_date', startDate);
     params.set('finish_date', finishDate);
 
-    return this.http.get<BudgetDate[]>(this.apiRoot + '/api/budgetdays', { params: params })
+    return this.http.get<Budget>(this.apiRoot + '/api/budgetdays', { params: params })
       .pipe(
-        //tap(budgetDate => console.log('fetched budget dates tap', budgetDate)),
+        map(budget => budget.budgetDays),
+        tap(budgetDays => console.log('fetched budget dates tap', budgetDays )),
         catchError((error: any) => Observable.throw(error))
         //catchError(this.handleError('getBudgetDates', []))
       );

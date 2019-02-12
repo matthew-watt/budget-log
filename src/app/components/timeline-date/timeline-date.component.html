@@ -7,8 +7,8 @@
   </div>
   <div class="row date">{{budgetDate.moment.format("MMM Do")}}</div>
   <div *ngIf="budgetDate.onServer">
-    <div class="row">Earned ${{budgetDate.income}}</div>
-    <div class="row">Spent ${{budgetDate.expenses}}</div>    
+    <div class="row">Earned ${{budgetDate.earned}}</div>
+    <div class="row">Spent ${{budgetDate.spent}}</div>    
   </div>
   <div *ngIf="!budgetDate.onServer" class="incomplete-date">
     ?

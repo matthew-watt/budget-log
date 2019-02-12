@@ -1,6 +1,6 @@
 <div class="page">
   <div class="summary-today">
-    <div class="summary-date">{{currentDay.date}}</div>
+    <div class="summary-date">{{currentDay.dateFormatted}}</div>
     <div class="logged-days row">120 days budgeting</div>
     <div class="budget-summary">
       <div class="total-income row">
@@ -16,42 +16,40 @@
   </div>
   <div class="container">
 
-    <div class="row input-row" *ngIf="!spentInputComplete || !earnedInputComplete">
+    <div class="row input-row" *ngIf="!todayComplete">
         <div></div>
-        <div class="spending-input" *ngIf="!spentInputComplete">
-          <label *ngIf="editMode">How much did you spend on the {{currentDay.moment.format('Do MMMM YYYY')}}?</label>
-          <label *ngIf="!editMode">How much did you spend today?</label>
+        <div class="spending-input" *ngIf="inputStep == 1">
+          <label *ngIf="!editingToday()">How much did you spend on the {{currentDay.moment.format('Do MMMM YYYY')}}?</label>
+          <label *ngIf="editingToday()">How much did you spend today?</label>
           <input type="number"
-                 [(ngModel)]="currentDay.expenses"
+                 [(ngModel)]="currentDay.spent"
                  (keyup)="onKey($event)"
                  #currentDaySpentInput>
         </div>
-        <div class="earnings-input" *ngIf="!earnedInputComplete && spentInputComplete">
-          <label>How much did you earn today?</label>
+        <div class="earnings-input" *ngIf="inputStep == 2">
+          <label *ngIf="!editingToday()">How much did you earn on the {{currentDay.moment.format('Do MMMM YYYY')}}?</label>
+          <label *ngIf="editingToday()">How much did you earn today?</label>
           <input type="number"
-                 [(ngModel)]="currentDay.income"
+                 [(ngModel)]="currentDay.earned"
                  (keyup)="onKey($event)"
                  #currentDayEarnedInput>
         </div>
         <div class="helper-text" *ngIf="inputHelperTextVisible">Press enter to continue</div>
     </div>
 
-    <div class="completed-input" *ngIf="spentInputComplete && earnedInputComplete">
+    <div class="completed-input" *ngIf="todayComplete">
       <div class="today-summary">
         <div class="today">
           <div class="today-label">Earned</div>
-          <div class="today-amount">${{currentDay.income}}</div>
+          <div class="today-amount">${{currentDay.earned}}</div>
         </div>
         <div class="today">
           <div class="today-label">Spent</div>
-          <div class="today-amount">${{currentDay.expenses}}</div>
+          <div class="today-amount">${{currentDay.spent}}</div>
         </div>        
       </div>
       <div class="summary-note">
         You saved ${{currentDay.saved}} Remember to log your spending tomorrow
-      </div>
-      <div class="edit">
-        <div class="button">Edit</div>
       </div>
     </div>
     

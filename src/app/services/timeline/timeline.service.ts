@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BudgetDate } from 'src/app/models/budget-date';
 import { Observable, Observer, Subject } from 'rxjs';
-import { nextContext } from '@angular/core/src/render3';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +13,7 @@ export class TimelineService {
   constructor() { }
 
   editBudgetDate(budgetDate: BudgetDate): void {
+    console.log('edit = ' + budgetDate);
     this.editingBudgetDate = budgetDate;
     this.editBudgetDateSubject.next(this.editingBudgetDate);
   }

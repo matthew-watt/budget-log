@@ -22,37 +22,14 @@ export class TimelineDateComponent implements OnInit {
               private elementRef: ElementRef,
               private changeDetectorRef: ChangeDetectorRef) { }
 
-  ngOnInit() {
-    
-  }
-
-  /*
-  ngAfterViewChecked() {
-    if (this.hoverElement) {
-      console.log('height', this.hoverElement.nativeElement.offsetHeight);
-      this.offsetTopHover = -1 * (this.hoverElement.nativeElement.offsetHeight);
-      this.offsetLeftHover = -1 * (this.hoverElement.nativeElement.offsetWidth - this.elementRef.nativeElement.offsetWidth) / 2 // date.width - hover.width / 2
-      this.changeDetectorRef.detectChanges();
-    }
-  }
-  */
+  ngOnInit() { }
 
   onClick() {
     this.editing = true;
     this.timelineService.editBudgetDate(this.budgetDate);
-    //this.timelineService.editBudgetDate(Object.assign(this.budgetDate, {}));
-    /*
-    this.timelineService.editBudgetDate(new BudgetDate({
-      expenses: this.budgetDate.expenses,
-      income: this.budgetDate.income,
-      date: this.budgetDate.date,
-      isToday: this.budgetDate.isToday
-    }));
-    */
   }
 
   onMouseEnter() {
-    console.log('hover');
     this.hoverVisible = true;
   }
 

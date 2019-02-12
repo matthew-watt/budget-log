@@ -1,10 +1,8 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
 import { BudgetDate } from 'src/app/models/budget-date';
 import * as moment from 'moment';
 import { Moment } from 'moment';
 import { HostListener } from '@angular/core'
-import { BudgetService } from 'src/app/services/budget/budget.service';
-import { nextContext } from '@angular/core/src/render3';
 
 @Component({
   selector: 'app-timeline',
@@ -38,8 +36,7 @@ export class TimelineComponent implements OnInit {
   //@Input() currentDay: BudgetDate;
   @ViewChild('hover') hoverElement: ElementRef;
 
-  constructor(private budgetService: BudgetService,
-              private changeDetectorRef: ChangeDetectorRef) { }
+  constructor() { }
 
   ngOnInit() {
     //this.timelineDates = this.updateTimeline();
@@ -55,15 +52,30 @@ export class TimelineComponent implements OnInit {
     this.updateTimelineLength(window.innerWidth);
     if (this.budgetDates.length > 0) {
       let rangeDates = this.datesOfRange(moment().subtract(this.timelineLength, 'd'), moment().add(1, 'd'));
-      let timelineDates = this.budgetDates.filter(bd => rangeDates.find(d => d.isSame(bd.moment)));      
-      // dates in rangeDates and not in timelineDates become Budget dates
-      let incompleteDates = rangeDates.filter(rd => !timelineDates.find(td => rd.isSame(td.moment)));
+
+      let todayComplete = this.budgetDates.find(function(d) {
+        return d.moment.isSame(moment(), 'd');
+      });
+      if (todayComplete) {
+        console.log('today is complete');
+      }
+
+      let completeDates = this.budgetDates.filter(bd => rangeDates.find(d => d.isSame(bd.moment)));
+      let incompleteDates = rangeDates.filter(rd => !completeDates.find(cd => rd.isSame(cd.moment)));
+
+      console.log('incomplete dates', incompleteDates);
+      console.log('complete dates', completeDates);
+
+      if (todayComplete) {
+
+      }
+
       let incompleteBudgetDates = this.datesToBudgetDates(incompleteDates, true);
-      this.timelineDates = timelineDates.concat(incompleteBudgetDates);
+      this.timelineDates = completeDates.concat(incompleteBudgetDates);
       this.timelineDates.sort(function(a, b) {
         return a.moment.valueOf() - b.moment.valueOf();
       });
-      console.log('timeline dates', this.timelineDates);
+      console.log('merged dates', this.timelineDates);
     }
   }
 
@@ -84,7 +96,7 @@ export class TimelineComponent implements OnInit {
   datesToBudgetDates(dates: Moment[], onServer: boolean = false): BudgetDate[] {
     let budgetDates: BudgetDate[] = [];    
     for (let date of dates) {      
-      budgetDates.push(new BudgetDate({
+      budgetDates.push(new BudgetDate({        
         moment: date,
         date: date.format('YYYY-MM-DDTHH:mm:ss'),
         onServer: false

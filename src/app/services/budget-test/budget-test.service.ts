@@ -19,10 +19,10 @@ export class BudgetTestService {
     //console.log('dates:', dates);
 
     let budgetDates: BudgetDate[] = [
-      new BudgetDate({ moment: moment().subtract(1, 'd').startOf('d'), income: 100, expenses: 50, onServer: true }),
-      new BudgetDate({ moment: moment().subtract(2, 'd').startOf('d'), income: 101, expenses: 51, onServer: true }),
-      new BudgetDate({ moment: moment().subtract(3, 'd').startOf('d'), income: 102, expenses: 52, onServer: true }),
-      new BudgetDate({ moment: moment().subtract(4, 'd').startOf('d'), income: 103, expenses: 53, onServer: true })
+      new BudgetDate({ moment: moment().subtract(1, 'd').startOf('d'), earned: 100, spent: 50, onServer: true }),
+      new BudgetDate({ moment: moment().subtract(2, 'd').startOf('d'), earned: 101, spent: 51, onServer: true }),
+      new BudgetDate({ moment: moment().subtract(3, 'd').startOf('d'), earned: 102, spent: 52, onServer: true }),
+      new BudgetDate({ moment: moment().subtract(4, 'd').startOf('d'), earned: 103, spent: 53, onServer: true })
     ];
     
     const mockResults = function(observer: Observer<BudgetDate[]>) {
