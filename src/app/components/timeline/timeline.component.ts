@@ -50,32 +50,34 @@ export class TimelineComponent implements OnInit {
 
   updateTimeline() {
     this.updateTimelineLength(window.innerWidth);
-    if (this.budgetDates.length > 0) {
-      let rangeDates = this.datesOfRange(moment().subtract(this.timelineLength, 'd'), moment().add(1, 'd'));
+    if (this.budgetDates) {
+      if (this.budgetDates.length > 0) {
+        let rangeDates = this.datesOfRange(moment().subtract(this.timelineLength, 'd'), moment().add(1, 'd'));
 
-      let todayComplete = this.budgetDates.find(function(d) {
-        return d.moment.isSame(moment(), 'd');
-      });
-      if (todayComplete) {
-        console.log('today is complete');
+        let todayComplete = this.budgetDates.find(function(d) {
+          return d.moment.isSame(moment(), 'd');
+        });
+        if (todayComplete) {
+          console.log('today is complete');
+        }
+
+        let completeDates = this.budgetDates.filter(bd => rangeDates.find(d => d.isSame(bd.moment)));
+        let incompleteDates = rangeDates.filter(rd => !completeDates.find(cd => rd.isSame(cd.moment)));
+
+        console.log('incomplete dates', incompleteDates);
+        console.log('complete dates', completeDates);
+
+        if (todayComplete) {
+
+        }
+
+        let incompleteBudgetDates = this.datesToBudgetDates(incompleteDates, true);
+        this.timelineDates = completeDates.concat(incompleteBudgetDates);
+        this.timelineDates.sort(function(a, b) {
+          return a.moment.valueOf() - b.moment.valueOf();
+        });
+        console.log('merged dates', this.timelineDates);
       }
-
-      let completeDates = this.budgetDates.filter(bd => rangeDates.find(d => d.isSame(bd.moment)));
-      let incompleteDates = rangeDates.filter(rd => !completeDates.find(cd => rd.isSame(cd.moment)));
-
-      console.log('incomplete dates', incompleteDates);
-      console.log('complete dates', completeDates);
-
-      if (todayComplete) {
-
-      }
-
-      let incompleteBudgetDates = this.datesToBudgetDates(incompleteDates, true);
-      this.timelineDates = completeDates.concat(incompleteBudgetDates);
-      this.timelineDates.sort(function(a, b) {
-        return a.moment.valueOf() - b.moment.valueOf();
-      });
-      console.log('merged dates', this.timelineDates);
     }
   }
 

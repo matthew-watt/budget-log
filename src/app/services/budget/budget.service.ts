@@ -29,8 +29,9 @@ export class BudgetService {
       .pipe(
         map(budget => budget.budgetDays),
         tap(budgetDays => console.log('fetched budget dates tap', budgetDays )),
-        catchError((error: any) => Observable.throw(error))
-        //catchError(this.handleError('getBudgetDates', []))
+        //catchError((error: any) => console.log(error))
+        //catchError(this.handleError('getBudgetDates', []));
+        //throw 
       );
   }
 
@@ -52,6 +53,7 @@ export class BudgetService {
   private handleError<T> (operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       // TODO: send the error to remote logging infrastructure
+      console.log('error caught in budget service');
       console.error(error); // log to console instead
 
       // TODO: better job of transforming error for user consumption

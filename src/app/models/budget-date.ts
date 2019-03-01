@@ -17,9 +17,9 @@ export class BudgetDate {
 
     private _moment: Moment;
     set moment(m: Moment) {
-        console.log('moment = ', m.toString());
-        console.log('moment ISO = ', m.toISOString());
-        console.log('-------------');
+        //console.log('moment = ', m.toString());
+        //console.log('moment ISO = ', m.toISOString());
+        //console.log('-------------');
         this._moment = m.clone();
         this._moment.startOf('d');
         let utcOffset = moment().utcOffset();

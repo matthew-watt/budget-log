@@ -5,6 +5,7 @@ import * as moment from 'moment';
 import { Moment } from 'moment';
 import { catchError, map, tap, flatMap } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
+import { throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,8 @@ export class BudgetTestService {
   constructor() { }
 
   getBudgetDates(startDate: string, endDate: string): Observable<BudgetDate[]> {
+
+    console.log('getting budget dates from test service');
 
     let dates = this.datesOfRange(moment(startDate), moment(endDate));
     //console.log('dates:', dates);
@@ -27,11 +30,16 @@ export class BudgetTestService {
     
     const mockResults = function(observer: Observer<BudgetDate[]>) {
       observer.next(budgetDates);
-      observer.error('...');
+      // if ...
+      //observer.error('...');
       observer.complete;
     };
     const update = new Observable(mockResults).pipe(
-      catchError((error: any) => Observable.throw(error))
+      catchError((error: any) => {
+        console.log(error);
+        return throwError(error);
+        //return Observable.throw(error.statusText);
+      })
     );
     return update;
   }
@@ -48,14 +56,17 @@ export class BudgetTestService {
     return dates;
   }
 
+  /*
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
       // A client-side or network error occurred. Handle it accordingly.
+      console.log('.... error 1');
       console.error('An error occurred:', error.error.message);
       Observable.throw(error);
     } else {
       // The backend returned an unsuccessful response code.
       // The response body may contain clues as to what went wrong,
+      console.log('.... error 2');
       console.error(
         `Backend returned code ${error.status}, ` +
         `body was: ${error.error}`);
@@ -64,5 +75,6 @@ export class BudgetTestService {
     // return an observable with a user-facing error message
     Observable.throw(error);
   };
+  */
 
 }

@@ -6,8 +6,9 @@ import { BudgetDate } from 'src/app/models/budget-date';
 import * as moment from 'moment';
 import { Moment } from 'moment';
 
-import { mergeMap, tap, map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { mergeMap, concatMap, tap, map, catchError } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { createChangeDetectorRef } from '@angular/core/src/view/refs';
 
 @Component({
   selector: 'app-expenses-log',
@@ -43,29 +44,29 @@ export class ExpensesLogComponent implements OnInit {
   ngOnInit() {
     let self = this;
     this.startDate = moment().subtract('days', 4).format('YYYY-MM-DD').toString();
-    this.finishDate = moment().add('days', 4).format('YYYY-MM-DD').toString();
+    this.finishDate = moment().add('days', 4).format('YYYY-MM-DD').toString();    
     
-    this.getBudgetDates()    
-        .subscribe({
-          next(budgetDates) {
-            console.log('fetched budget dates from server.');
-            console.log('fetched dates from server', budgetDates);
-            self.timelineBudgetDates = self.processDates(budgetDates);
-            console.log('timeline dates', self.timelineBudgetDates);            
-          },
-          error(error) {
-            // shouldn't nest rxjs like this, defeats the purpose
+    //this.getBudgetDates()
+    this.budgetService.getBudgetDays(this.startDate, this.finishDate)
+        .pipe(
+          map(res => {
+            self.timelineBudgetDates = self.processDates(res);
+          }),
+          catchError(error => {
             self.budgetTestService.getBudgetDates(self.startDate, self.finishDate)
-            
-            .subscribe({
-              next(budgetDates) {
-                console.log('fetched budget dates from local test service.');
-                self.timelineBudgetDates = budgetDates;                   
-              },
-              error(error) {}
-            });
-          }
+                                  .pipe(
+                                    map(res => {
+                                      self.timelineBudgetDates = res;
+                                    })
+                                  )
+                                  .subscribe();
+            return of('using test service');
+          })
+        )
+        .subscribe(res => {
+          console.log('Response = ', res);          
         });
+        
 
         // if new day, could be past, requires date
         // existing, requires id only
